@@ -2,9 +2,10 @@ package com.neathorium.thorium.core.namespaces.systemidentity;
 
 import com.neathorium.thorium.core.constants.systemidentity.BasicSystemIdentityConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.EnumKeyFunctions;
+
 import com.neathorium.thorium.core.platform.enums.PlatformKey;
+import com.neathorium.thorium.java.extensions.namespaces.enums.EnumKeyFunctions;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 
 import java.util.Objects;
 
@@ -85,7 +86,7 @@ public interface BasicSystemIdentityFunctions {
         }
 
         final var isExpectedUnsupported = EnumKeyFunctions.isNotIn(os, osType);
-        if (CoreUtilities.isFalse(isUnknown) && isExpectedUnsupported) {
+        if (BooleanUtilities.isFalse(isUnknown) && isExpectedUnsupported) {
             message += "Operating system is (\"" + osType + "\"), expected is (\"" + os + "\"), is unsupported";
         }
 

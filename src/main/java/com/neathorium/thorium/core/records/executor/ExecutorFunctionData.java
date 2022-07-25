@@ -1,10 +1,10 @@
 package com.neathorium.thorium.core.records.executor;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.QuadFunction;
-import com.neathorium.thorium.core.extensions.interfaces.functional.QuadPredicate;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriPredicate;
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.IGetMessage;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.java.extensions.interfaces.functional.QuadFunction;
+import com.neathorium.thorium.java.extensions.interfaces.functional.QuadPredicate;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriPredicate;
+import com.neathorium.thorium.java.extensions.interfaces.functional.boilers.IGetMessage;
 
 import java.util.Objects;
 import java.util.function.Predicate;

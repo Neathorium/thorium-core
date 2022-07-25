@@ -1,9 +1,9 @@
 package com.neathorium.thorium.core.records;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.IGetMessage;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
+import com.neathorium.thorium.java.extensions.interfaces.functional.boilers.IGetMessage;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -30,7 +30,7 @@ public class SimpleMessageData implements IGetMessage {
 
     @Override
     public Function<Boolean, String> get() {
-        final var isFormatterNull = NullableFunctions.isNull(FORMATTER);
+        final var isFormatterNull = NullablePredicates.isNull(FORMATTER);
         final var isMessageBlank = isBlank(MESSAGE);
         if (isFormatterNull && isMessageBlank) {
             return CoreFormatter.isFormatterNullAndMessageBlank();
@@ -53,14 +53,14 @@ public class SimpleMessageData implements IGetMessage {
             return true;
         }
 
-        if (NullableFunctions.isNull(o) || CoreUtilities.isNotEqual(getClass(), o.getClass())) {
+        if (NullablePredicates.isNull(o) || EqualsPredicates.isNotEqual(getClass(), o.getClass())) {
             return false;
         }
 
         final var that = (SimpleMessageData) o;
         return (
-            Objects.equals(FORMATTER, that.FORMATTER) &&
-            Objects.equals(MESSAGE, that.MESSAGE)
+            EqualsPredicates.isEqual(FORMATTER, that.FORMATTER) &&
+            EqualsPredicates.isEqual(MESSAGE, that.MESSAGE)
         );
     }
 

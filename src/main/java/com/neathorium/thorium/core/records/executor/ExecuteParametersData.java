@@ -1,8 +1,10 @@
 package com.neathorium.thorium.core.records.executor;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.QuadFunction;
-import com.neathorium.thorium.core.extensions.interfaces.functional.QuadPredicate;
 import com.neathorium.thorium.core.records.command.CommandRangeData;
+import com.neathorium.thorium.java.extensions.interfaces.functional.QuadFunction;
+import com.neathorium.thorium.java.extensions.interfaces.functional.QuadPredicate;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.Objects;
 
@@ -19,8 +21,13 @@ public class ExecuteParametersData {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (NullablePredicates.isNull(o) || EqualsPredicates.isNotEqual(getClass(), o.getClass())) {
+            return false;
+        }
         final var that = (ExecuteParametersData) o;
         return Objects.equals(range, that.range) && Objects.equals(endCondition, that.endCondition) && Objects.equals(messageHandler, that.messageHandler);
     }

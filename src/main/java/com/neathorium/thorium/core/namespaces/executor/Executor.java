@@ -1,18 +1,19 @@
 package com.neathorium.thorium.core.namespaces.executor;
 
-import com.neathorium.thorium.core.constants.CoreDataConstants;
 import com.neathorium.thorium.core.constants.CoreConstants;
+import com.neathorium.thorium.core.constants.ExecutorConstants;
+import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
+import com.neathorium.thorium.core.records.executor.ExecutionParametersData;
 import com.neathorium.thorium.core.records.executor.ExecutionResultData;
 import com.neathorium.thorium.core.records.executor.ExecutionStateData;
 import com.neathorium.thorium.core.records.executor.ExecutionStepsData;
 import com.neathorium.thorium.core.records.executor.ExecutorFunctionData;
-import com.neathorium.thorium.core.records.executor.ExecutionParametersData;
-import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 
 import java.util.function.Function;
 
@@ -22,7 +23,7 @@ public interface Executor {
         ExecutorFunctionData functionData,
         ExecutionStateData stateData
     ) {
-        Data<?> data = CoreDataConstants.NO_STEPS;
+        Data<?> data = ExecutorConstants.NO_STEPS;
         final var exitCondition = functionData.breakCondition;
         final var filter = functionData.filterCondition;
         final var indices = stateData.indices;
@@ -36,8 +37,8 @@ public interface Executor {
         while (exitCondition.test(data, index, indices.size())) {
             stepIndex = indices.get(index);
             data = steps[stepIndex].apply(dependency);
-            key = CoreFormatter.getExecutionResultKey(data.message.nameof, stepIndex);
-            if (!map.containsKey(key) || DataPredicates.isInvalidOrFalse(map.get(key))) {
+            key = CoreFormatter.getExecutionResultKey(data.MESSAGE().NAMEOF(), stepIndex);
+            if (BooleanUtilities.isFalse(map.containsKey(key)) || DataPredicates.isInvalidOrFalse(map.get(key))) {
                 map.put(key, data);
             }
 
@@ -52,7 +53,7 @@ public interface Executor {
         final var status = functionData.endCondition.test(executionStatus, steps.length, index, indices.size());
         final var message = functionData.messageData.get().apply(status) + CoreFormatterConstants.COLON_NEWLINE + functionData.endMessageHandler.apply(executionStatus, key, index, length);
         @SuppressWarnings("unchecked")
-        final var returnObject = (ReturnType)data.object;
+        final var returnObject = (ReturnType)data.OBJECT();
         return DataFactoryFunctions.getWith(ExecutionResultDataFactory.getWith(executionStatus, returnObject), status, "executeCore", message);
     }
 
@@ -83,7 +84,7 @@ public interface Executor {
         ExecutionParametersData<Function<DependencyType, Data<?>>, Function<DependencyType, Data<ExecutionResultData<ReturnType>>>> execution
     ) {
         final var result = execute(execution, ExecutionStateDataFactory.getWithDefaultMapAndSpecificLength(stepsData.length), stepsData.steps).apply(stepsData.dependency);
-        return DataFactoryFunctions.replaceObject(result, result.object.result);
+        return DataFactoryFunctions.replaceObject(result, result.OBJECT().result);
     }
 
     @SafeVarargs

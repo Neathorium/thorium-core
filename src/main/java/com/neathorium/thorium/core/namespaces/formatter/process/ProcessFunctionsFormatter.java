@@ -12,6 +12,6 @@ public interface ProcessFunctionsFormatter {
     }
 
     static String getBuilderFormattedParametersMessage(ApplicationData data) {
-        return getBuilderFormattedParametersMessage(data.name, data.path, data.arguments);
+        return getBuilderFormattedParametersMessage(data.name(), data.path(), data.arguments());
     }
 }

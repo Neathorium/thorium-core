@@ -1,9 +1,9 @@
 package com.neathorium.thorium.core.records.executor;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.DataSupplier;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.data.interfaces.DataSupplier;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -21,19 +21,19 @@ public class ExecutionKeyStepData<T, U, V> implements DataSupplier<V> {
 
     @Override
     public boolean equals(Object o) {
-        if (CoreUtilities.isEqual(this, o)) {
+        if (this == o) {
             return true;
         }
 
-        if (NullableFunctions.isNull(o) || CoreUtilities.isNotEqual(getClass(), o.getClass())) {
+        if (NullablePredicates.isNull(o) || EqualsPredicates.isNotEqual(getClass(), o.getClass())) {
             return false;
         }
 
         final var that = (ExecutionKeyStepData<?, ?, ?>) o;
         return (
-            CoreUtilities.isEqual(step, that.step) &&
-            CoreUtilities.isEqual(dependencyGetter, that.dependencyGetter) &&
-            CoreUtilities.isEqual(dependencyKey, that.dependencyKey)
+             EqualsPredicates.isEqual(step, that.step) &&
+            EqualsPredicates.isEqual(dependencyGetter, that.dependencyGetter) &&
+            EqualsPredicates.isEqual(dependencyKey, that.dependencyKey)
         );
     }
 

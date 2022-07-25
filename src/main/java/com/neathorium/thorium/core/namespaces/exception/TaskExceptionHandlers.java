@@ -1,12 +1,13 @@
 package com.neathorium.thorium.core.namespaces.exception;
 
-import com.neathorium.thorium.core.constants.exception.ExceptionConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.DataFunctions;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
+import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
@@ -17,7 +18,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public interface TaskExceptionHandlers {
     static <T> Data<Boolean> futureHandler(CompletableFuture<T> task) {
         final var nameof = "futureHandler";
-        if (NullableFunctions.isNull(task)) {
+        if (NullablePredicates.isNull(task)) {
             return DataFactoryFunctions.getInvalidBooleanWith(nameof, "Task parameter" + CoreFormatterConstants.WAS_NULL);
         }
 
@@ -34,7 +35,7 @@ public interface TaskExceptionHandlers {
 
     static Data<Boolean> futureDataHandler(CompletableFuture<? extends Data<?>> task) {
         final var nameof = "futureDataHandler";
-        if (NullableFunctions.isNull(task)) {
+        if (NullablePredicates.isNull(task)) {
             return DataFactoryFunctions.getInvalidBooleanWith(nameof, "Task parameter" + CoreFormatterConstants.WAS_NULL);
         }
 
@@ -46,10 +47,10 @@ public interface TaskExceptionHandlers {
             exception = ex;
         }
 
-        final var isNotBlank = NullableFunctions.isNotNull(data) && NullableFunctions.isNotNull(data.message) && isNotBlank(data.message.nameof);
+        final var isNotBlank = NullablePredicates.isNotNull(data) && NullablePredicates.isNotNull(data.MESSAGE()) && isNotBlank(data.MESSAGE().NAMEOF());
         return DataFactoryFunctions.getBoolean(
             ExceptionFunctions.isNonException(exception) && DataPredicates.isValidNonFalse(data),
-            isNotBlank ? data.message.nameof : nameof,
+            isNotBlank ? data.MESSAGE().NAMEOF() : nameof,
             task.isDone() ? DataFunctions.getStatusMessageFromData(data) : CoreFormatterConstants.INVOCATION_EXCEPTION,
             exception
         );

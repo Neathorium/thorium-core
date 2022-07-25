@@ -1,12 +1,12 @@
 package com.neathorium.thorium.core.namespaces.exception;
 
 import com.neathorium.thorium.core.constants.CoreConstants;
-import com.neathorium.thorium.core.constants.exception.ExceptionConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.records.clipboard.ClipboardData;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
+import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
+import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -18,7 +18,7 @@ public interface ClipboardExceptionHandlers {
         var result = CoreConstants.STOCK_OBJECT;
         var exception = ExceptionConstants.EXCEPTION;
         try {
-            result = data.clipboard.getContents(data.owner).getTransferData(data.flavor);
+            result = data.CLIPBOARD().getContents(data.OWNER()).getTransferData(data.FLAVOR());
         } catch (UnsupportedFlavorException | IOException ex) {
             exception = ex;
         }

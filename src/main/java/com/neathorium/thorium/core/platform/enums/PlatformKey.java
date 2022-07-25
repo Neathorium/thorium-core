@@ -1,7 +1,7 @@
 package com.neathorium.thorium.core.platform.enums;
 
-import com.neathorium.thorium.core.extensions.interfaces.IEnumKey;
 import com.neathorium.thorium.core.platform.constants.PlatformConstants;
+import com.neathorium.thorium.java.extensions.interfaces.IEnumKey;
 
 import java.util.Arrays;
 import java.util.HashMap;

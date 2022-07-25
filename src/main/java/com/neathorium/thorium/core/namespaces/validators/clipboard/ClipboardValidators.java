@@ -10,9 +10,9 @@ public interface ClipboardValidators {
         var message = CoreFormatter.isNullMessageWithName(data, "Clipboard data");
         if (isBlank(message)) {
             message += (
-                CoreFormatter.isNullMessageWithName(data.castData, "Basic cast Data") +
-                CoreFormatter.isNullMessageWithName(data.clipboard, "Clipboard") +
-                CoreFormatter.isNullMessageWithName(data.flavor, "Clipboard Data Flavor")
+                CoreFormatter.isNullMessageWithName(data.CAST_DATA(), "Basic cast Data") +
+                CoreFormatter.isNullMessageWithName(data.CLIPBOARD(), "Clipboard") +
+                CoreFormatter.isNullMessageWithName(data.FLAVOR(), "Clipboard Data Flavor")
             );
         }
 

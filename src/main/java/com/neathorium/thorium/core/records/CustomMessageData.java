@@ -1,9 +1,12 @@
 package com.neathorium.thorium.core.records;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.IGetMessage;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
+
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
+import com.neathorium.thorium.java.extensions.interfaces.functional.boilers.IGetMessage;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -37,12 +40,15 @@ public class CustomMessageData implements IGetMessage {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (NullablePredicates.isNull(o) || EqualsPredicates.isNotEqual(getClass(), o.getClass())) {
+            return false;
+        }
+
         final var that = (CustomMessageData) o;
         return (
-            Objects.equals(prefix, that.prefix) &&
-            Objects.equals(suffix, that.suffix) &&
-            Objects.equals(messageFormatter, that.messageFormatter)
+            EqualsPredicates.isEqual(prefix, that.prefix) &&
+            EqualsPredicates.isEqual(suffix, that.suffix) &&
+            EqualsPredicates.isEqual(messageFormatter, that.messageFormatter)
         );
     }
 

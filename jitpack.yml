@@ -1,2 +1,6 @@
+before_install:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+  - source install-jdk.sh -F 17 -L GPL
+
 jdk:
-  - openjdk11
+  - openjdk17
