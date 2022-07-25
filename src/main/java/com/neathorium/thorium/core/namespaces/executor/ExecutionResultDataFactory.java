@@ -1,16 +1,16 @@
 package com.neathorium.thorium.core.namespaces.executor;
 
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.records.executor.ExecutionResultData;
 import com.neathorium.thorium.core.records.executor.ExecutionStateData;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ExecutionResultDataFactory {
     static <T> ExecutionResultData<T> getWith(ExecutionStateData data, T object) {
-        final var lData = NullableFunctions.isNotNull(data) ? data : ExecutionStateDataFactory.getWithDefaults();
+        final var lData = NullablePredicates.isNotNull(data) ? data : ExecutionStateDataFactory.getWithDefaults();
         return new ExecutionResultData<>(lData, object);
     }
 

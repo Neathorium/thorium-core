@@ -1,6 +1,6 @@
 package com.neathorium.thorium.core.namespaces.validators;
 
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -8,9 +8,9 @@ public interface DataValidators {
     private static String isInvalidParametersMessage(Data<?> data) {
         final var baseName = "Data";
         return (
-            CoreFormatter.isNullMessageWithName(data.exception, baseName + " Exception") +
-            CoreFormatter.isNullMessageWithName(data.exceptionMessage, baseName + " Exception message") +
-            MethodMessageDataValidators.isInvalidMessage(data.message)
+            CoreFormatter.isNullMessageWithName(data.EXCEPTION(), baseName + " Exception") +
+            CoreFormatter.isNullMessageWithName(data.EXCEPTION_MESSAGE(), baseName + " Exception message") +
+            MethodMessageDataValidators.isInvalidMessage(data.MESSAGE())
         );
     }
 

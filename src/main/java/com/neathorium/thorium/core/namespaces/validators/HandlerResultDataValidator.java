@@ -10,8 +10,8 @@ public interface HandlerResultDataValidator {
         var message = CoreFormatter.isNullMessageWithName(data, baseName);
         if (isBlank(message)) {
             message += (
-                CoreFormatter.isNullMessageWithName(data.caster, baseName + " Caster") +
-                CoreFormatter.isNullMessageWithName(data.parameter, baseName + " Parameter")
+                CoreFormatter.isNullMessageWithName(data.CASTER(), baseName + " Caster") +
+                CoreFormatter.isNullMessageWithName(data.PARAMETER(), baseName + " Parameter")
             );
         }
 

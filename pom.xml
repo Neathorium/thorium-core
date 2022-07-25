@@ -10,8 +10,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <!--Dependency Versions-->
+        <thorium-exceptions.version>e695205e5fe63212fac4803bcbf4734c7105cb72</thorium-exceptions.version>
+        <thorium-java-extensions.version>417e74f8024689a9dc37983d0b67c7e4ec914e0c</thorium-java-extensions.version>
+        <thorium-data.version>13ce555318bdd7154f9bd1cd32b8898d5e968021</thorium-data.version>
         <selenium.version>3.12.0</selenium.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
@@ -31,6 +34,21 @@
         </repository>
     </repositories>
     <dependencies>
+        <dependency>
+            <groupId>com.github.Neathorium</groupId>
+            <artifactId>thorium-exceptions</artifactId>
+            <version>${thorium-exceptions.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Neathorium</groupId>
+            <artifactId>thorium-java-extensions</artifactId>
+            <version>${thorium-java-extensions.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Neathorium</groupId>
+            <artifactId>thorium-data</artifactId>
+            <version>${thorium-data.version}</version>
+        </dependency>
         <!-- Apache commons Lang -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -137,4 +155,16 @@
             </build>
         </profile>
     </profiles>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.2.0</version>
+                <configuration>
+                    <!-- Optional directory to put spotbugs xml report -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

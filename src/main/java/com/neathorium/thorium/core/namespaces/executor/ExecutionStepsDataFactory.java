@@ -1,9 +1,9 @@
 package com.neathorium.thorium.core.namespaces.executor;
 
-import com.neathorium.thorium.core.extensions.namespaces.predicates.BasicPredicates;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.records.executor.ExecutionStepsData;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.function.Function;
 
@@ -14,7 +14,7 @@ public interface ExecutionStepsDataFactory {
     }
 
     static <DependencyType> ExecutionStepsData<DependencyType> getWithStepsAndDependency(Function<DependencyType, Data<?>>[] steps, DependencyType dependency) {
-        if (NullableFunctions.isNull(steps)) {
+        if (NullablePredicates.isNull(steps)) {
             return getWith(steps, dependency, 0);
         }
 

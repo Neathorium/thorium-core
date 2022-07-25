@@ -1,12 +1,12 @@
 package com.neathorium.thorium.core.namespaces.executor;
 
 import com.neathorium.thorium.core.constants.CommandRangeDataConstants;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
+import com.neathorium.thorium.core.constants.ExecutorConstants;
 import com.neathorium.thorium.core.records.command.CommandRangeData;
+import com.neathorium.thorium.core.records.executor.ExecutionParametersData;
 import com.neathorium.thorium.core.records.executor.ExecutionStateData;
 import com.neathorium.thorium.core.records.executor.ExecutorFunctionData;
-import com.neathorium.thorium.core.records.executor.ExecutionParametersData;
-import com.neathorium.thorium.core.constants.ExecutorConstants;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
 
 public interface ExecutionParametersDataFactory {
     static <ArrayType, ReturnType> ExecutionParametersData<ArrayType, ReturnType> getWith(

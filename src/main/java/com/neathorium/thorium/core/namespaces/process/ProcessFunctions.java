@@ -1,13 +1,13 @@
 package com.neathorium.thorium.core.namespaces.process;
 
 import com.neathorium.thorium.core.constants.process.ProcessConstants;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.namespaces.formatter.process.ProcessFunctionsFormatter;
 import com.neathorium.thorium.core.namespaces.systemidentity.BasicSystemIdentityFunctions;
 import com.neathorium.thorium.core.namespaces.validators.process.ProcessFunctionsValidators;
 import com.neathorium.thorium.core.platform.enums.PlatformKey;
-import com.neathorium.thorium.core.records.Data;
-import com.neathorium.thorium.core.namespaces.formatter.process.ProcessFunctionsFormatter;
 import com.neathorium.thorium.core.records.process.ApplicationData;
 
 import java.io.File;
@@ -43,8 +43,8 @@ public interface ProcessFunctions {
             return DataFactoryFunctions.getInvalidWith(ProcessConstants.NULL_BUILDER, nameof, errorMessage);
         }
 
-        final var path = data.path;
-        final var arguments = data.arguments;
+        final var path = data.path();
+        final var arguments = data.arguments();
         final var builder = new ProcessBuilder().command(getCommandList(path, arguments));
         final var message = ProcessFunctionsFormatter.getBuilderFormattedParametersMessage(data);
 
@@ -63,7 +63,7 @@ public interface ProcessFunctions {
             return builderData;
         }
 
-        final var builder = builderData.object;
+        final var builder = builderData.OBJECT();
         builder.redirectOutput(getNullFile(BasicSystemIdentityFunctions.getSystemTypeOrUnknown(os))).redirectErrorStream(true);
 
         return DataFactoryFunctions.replaceObject(builderData, builder);

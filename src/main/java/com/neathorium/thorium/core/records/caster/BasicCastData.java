@@ -1,6 +1,6 @@
 package com.neathorium.thorium.core.records.caster;
 
-import com.neathorium.thorium.core.abstracts.AbstractCastData;
+import com.neathorium.thorium.core.abstracts.casting.AbstractCastData;
 
 import java.util.function.Function;
 

@@ -1,10 +1,10 @@
 package com.neathorium.thorium.core.namespaces.systemidentity;
 
 import com.neathorium.thorium.core.constants.systemidentity.BasicSystemIdentityConstants;
-import com.neathorium.thorium.core.extensions.namespaces.predicates.BasicPredicates;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
+
 import com.neathorium.thorium.core.platform.enums.PlatformKey;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public interface ConcreteSystemIdentityFunctions {
 
     static String getHostName() {
         var host = "";
-        if (isOSX() && CoreUtilities.areNull(BasicSystemIdentityConstants.PROPERTY_HOSTNAME, BasicSystemIdentityConstants.PROPERTY_COMPUTERNAME)) {
+        if (isOSX() && NullablePredicates.areNull(BasicSystemIdentityConstants.PROPERTY_HOSTNAME, BasicSystemIdentityConstants.PROPERTY_COMPUTERNAME)) {
             try {
                 final var processBuilder = new ProcessBuilder("hostname");
                 final var process = processBuilder.start();
@@ -52,7 +52,7 @@ public interface ConcreteSystemIdentityFunctions {
             } catch (IOException ignored) {
             }
         }
-        host = NullableFunctions.isNotNull(BasicSystemIdentityConstants.PROPERTY_HOSTNAME) ? BasicSystemIdentityConstants.PROPERTY_HOSTNAME : BasicSystemIdentityConstants.PROPERTY_COMPUTERNAME;
+        host = NullablePredicates.isNotNull(BasicSystemIdentityConstants.PROPERTY_HOSTNAME) ? BasicSystemIdentityConstants.PROPERTY_HOSTNAME : BasicSystemIdentityConstants.PROPERTY_COMPUTERNAME;
         if (isBlank(host)) {
             try {
                 host = InetAddress.getLocalHost().getHostName();
@@ -67,7 +67,7 @@ public interface ConcreteSystemIdentityFunctions {
     static String getHostAddress() {
         var address = "";
 
-        try(final var socket = new DatagramSocket()){
+        try(final var socket = new DatagramSocket()) {
             socket.connect(InetAddress.getByName(BasicSystemIdentityConstants.ROUTING_IP), BasicSystemIdentityConstants.ROUTING_PORT);
             address = socket.getLocalAddress().getHostAddress();
         } catch (UnknownHostException | SocketException ex) {
@@ -83,10 +83,9 @@ public interface ConcreteSystemIdentityFunctions {
 
     static String getOSXHostAddress() {
         var address = "";
+        final var socketAddress = new InetSocketAddress(BasicSystemIdentityConstants.INTERNET_URI, BasicSystemIdentityConstants.INTERNET_PORT);
         try (final var socket = new Socket()) {
-            socket.connect(
-                new InetSocketAddress(BasicSystemIdentityConstants.INTERNET_URI, BasicSystemIdentityConstants.INTERNET_PORT)
-            );
+            socket.connect(socketAddress);
             address = socket.getLocalAddress().getHostAddress();
             if (isNotBlank(address)) {
                 return address;

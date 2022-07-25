@@ -1,7 +1,7 @@
 package com.neathorium.thorium.core.records.executor;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
 import com.neathorium.thorium.core.records.command.CommandRangeData;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
 
 import java.util.Objects;
 

@@ -1,6 +1,6 @@
 package com.neathorium.thorium.core.records.executor;
 
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 
 import java.util.Arrays;
 import java.util.Objects;

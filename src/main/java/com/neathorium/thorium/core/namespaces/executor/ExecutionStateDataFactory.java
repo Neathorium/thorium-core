@@ -1,9 +1,9 @@
 package com.neathorium.thorium.core.namespaces.executor;
 
-import com.neathorium.thorium.core.extensions.namespaces.predicates.BasicPredicates;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.records.executor.ExecutionStateData;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,8 +28,8 @@ public interface ExecutionStateDataFactory {
 
     static ExecutionStateData getWith(Map<String, Data<?>> map, List<Integer> indices) {
         return new ExecutionStateData(
-            NullableFunctions.isNotNull(map) ? map : getDefaultMap(),
-            NullableFunctions.isNotNull(indices) ? indices : getDefaultList()
+            NullablePredicates.isNotNull(map) ? map : getDefaultMap(),
+            NullablePredicates.isNotNull(indices) ? indices : getDefaultList()
         );
     }
 

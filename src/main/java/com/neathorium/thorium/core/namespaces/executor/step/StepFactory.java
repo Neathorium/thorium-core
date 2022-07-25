@@ -1,7 +1,7 @@
 package com.neathorium.thorium.core.namespaces.executor.step;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.DataSupplier;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.data.interfaces.DataSupplier;
 import com.neathorium.thorium.core.records.executor.ExecutionKeyStepData;
 import com.neathorium.thorium.core.records.executor.ExecutionStepData;
 

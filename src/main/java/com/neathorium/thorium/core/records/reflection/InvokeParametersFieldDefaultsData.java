@@ -1,6 +1,9 @@
 package com.neathorium.thorium.core.records.reflection;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriFunction;
+
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -17,10 +20,19 @@ public class InvokeParametersFieldDefaultsData<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (NullablePredicates.isNull(o) || EqualsPredicates.isNotEqual(getClass(), o.getClass())) {
+            return false;
+        }
+
         final var that = (InvokeParametersFieldDefaultsData<?>) o;
-        return Objects.equals(validator, that.validator) && Objects.equals(handler, that.handler);
+        return (
+            EqualsPredicates.isEqual(validator, that.validator) &&
+            EqualsPredicates.isEqual(handler, that.handler)
+        );
     }
 
     @Override

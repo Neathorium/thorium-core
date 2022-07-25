@@ -1,11 +1,12 @@
 package com.neathorium.thorium.core.namespaces;
 
-import com.neathorium.thorium.core.constants.exception.ExceptionConstants;
-import com.neathorium.thorium.core.namespaces.exception.ExceptionFunctions;
-import com.neathorium.thorium.core.records.Data;
-import com.neathorium.thorium.core.records.HandleResultData;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.namespaces.validators.HandlerResultDataValidator;
+import com.neathorium.thorium.core.records.HandleResultData;
+import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
+import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -18,9 +19,9 @@ public interface ExceptionHandlers {
         }
 
         var exception = ExceptionConstants.EXCEPTION;
-        var result = data.defaultValue;
+        var result = data.DEFAULT_VALUE();
         try {
-            result = data.caster.apply(data.parameter);
+            result = data.CASTER().apply(data.PARAMETER());
         } catch (ClassCastException ex) {
             exception = ex;
         }

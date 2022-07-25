@@ -2,30 +2,25 @@ package com.neathorium.thorium.core.namespaces.validators;
 
 import com.neathorium.thorium.core.constants.CommandRangeDataConstants;
 import com.neathorium.thorium.core.constants.formatter.NumberConditionDataConstants;
-import com.neathorium.thorium.core.extensions.DecoratedList;
-import com.neathorium.thorium.core.extensions.interfaces.IEmptiable;
-import com.neathorium.thorium.core.extensions.namespaces.predicates.AmountPredicates;
-import com.neathorium.thorium.core.extensions.namespaces.predicates.BasicPredicates;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.EmptiableFunctions;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
-import com.neathorium.thorium.core.namespaces.DataFunctions;
-import com.neathorium.thorium.core.namespaces.StringUtilities;
-import com.neathorium.thorium.core.namespaces.exception.ExceptionFunctions;
-import com.neathorium.thorium.core.namespaces.predicates.DataPredicates;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
+import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.records.command.CommandRangeData;
 import com.neathorium.thorium.core.records.executor.ExecutionResultData;
 import com.neathorium.thorium.core.records.executor.ExecutionStateData;
 import com.neathorium.thorium.core.records.formatter.NumberConditionData;
-import com.neathorium.thorium.core.records.reflection.message.InvokeCommonMessageParametersData;
-import com.neathorium.thorium.core.records.reflection.message.InvokeParameterizedMessageData;
-import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.records.wait.WaitTimeData;
+import com.neathorium.thorium.java.extensions.classes.DecoratedList;
+import com.neathorium.thorium.java.extensions.interfaces.IEmptiable;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.AmountPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.EmptiablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +57,7 @@ public interface CoreFormatter {
     }
 
     static <T> String isNullMessageWithName(T object, String parameterName) {
-        return isParameterMessage(NullableFunctions.isNull(object), parameterName, "null");
+        return isParameterMessage(NullablePredicates.isNull(object), parameterName, "null");
     }
 
     static <T> String isNullMessage(T object) {
@@ -81,7 +76,7 @@ public interface CoreFormatter {
     static String isInvalidOrFalseMessageWithName(Data data, String parameterName) {
         var message = isParameterMessage(DataPredicates.isInvalidOrFalse(data), parameterName, "false data");
         if (isNotBlank(message)) {
-            message += data.message;
+            message += data.MESSAGE();
         }
 
         return getNamedErrorMessageOrEmpty("isInvalidOrFalseMessage", message);
@@ -98,7 +93,7 @@ public interface CoreFormatter {
     private static String isValidNonFalseMessageWithName(Data data, String parameterName) {
         var message = isParameterNotMessage(DataPredicates.isValidNonFalse(data), parameterName, "valid, non-false data");
         if (isNotBlank(message)) {
-            message += data.message;
+            message += data.MESSAGE();
         }
 
         return getNamedErrorMessageOrEmpty("isValidNonFalseMessageWithName", message);
@@ -111,7 +106,7 @@ public interface CoreFormatter {
     static String isFalseMessageWithName(Data data, String parameterName) {
         var message = isParameterMessage(DataPredicates.isFalse(data), parameterName, "false data");
         if (isNotBlank(message)) {
-            message += data.message;
+            message += data.MESSAGE();
         }
 
         return getNamedErrorMessageOrEmpty("isFalseMessageWithName", message);
@@ -124,7 +119,7 @@ public interface CoreFormatter {
     static String isTrueMessageWithName(Data data, String parameterName) {
         var message = isParameterMessage(DataPredicates.isTrue(data), parameterName, "true data");
         if (isNotBlank(message)) {
-            message += data.message;
+            message += data.MESSAGE();
         }
 
         return getNamedErrorMessageOrEmpty("isTrueMessageWithName", message);
@@ -143,11 +138,11 @@ public interface CoreFormatter {
     }
 
     static String isFalseMessageWithName(boolean condition, String parameterName) {
-        return isParameterMessage(CoreUtilities.isFalse(condition), parameterName, "false");
+        return isParameterMessage(BooleanUtilities.isFalse(condition), parameterName, "false");
     }
 
     static String isInvalidMessage(boolean condition, String parameterName) {
-        return isParameterMessage(CoreUtilities.isFalse(condition), parameterName, "invalid");
+        return isParameterMessage(BooleanUtilities.isFalse(condition), parameterName, "invalid");
     }
 
     static String getConditionStatusMessage(boolean key) {
@@ -183,28 +178,6 @@ public interface CoreFormatter {
 
     static String getMethodFromMapMessage(String methodName, boolean status) {
         return "Method(" + methodName + ") " + getOptionMessage(status) + " found in map" + CoreFormatterConstants.END_LINE;
-    }
-
-    static String getExecutionTimeMessage(boolean success, String message, WaitTimeData data, Instant startTime, Instant stopTime) {
-        final var localMessage = "\t" + (StringUtilities.endsWithCaseInsensitive(message, "\n") ? message : message + "\n");
-        return (
-            (success ? CoreFormatterConstants.WAITING_SUCCESSFUL : CoreFormatterConstants.WAITING_FAILED) +
-            localMessage +
-            "\tExecution ran from time(\"" + startTime.toString() + "\") to (\"" + stopTime.toString() + "\")" + CoreFormatterConstants.END_LINE +
-            "\tDuration(\"" + data.duration.toMillis() + "\" milliseconds), actually ran for " + ChronoUnit.MILLIS.between(startTime, stopTime) + " milliseconds, with " + data.interval.toMillis() + " milliseconds interval" + CoreFormatterConstants.END_LINE
-        );
-    }
-
-    static String getWaitInterruptMessage(String message) {
-        return CoreFormatterConstants.WAITING_FAILED + "Thread interruption occurred, exception message" + CoreFormatterConstants.COLON_NEWLINE + message;
-    }
-
-    static String getWaitExpectedExceptionMessage(String message) {
-        return CoreFormatterConstants.WAITING_FAILED + "Expected exception occurred, exception message" + CoreFormatterConstants.COLON_NEWLINE + message;
-    }
-
-    static String getWaitCancellationWithoutResultMessage(String message) {
-        return CoreFormatterConstants.WAITING_FAILED + "Cancellation exception occurred with no result, exception message" + CoreFormatterConstants.COLON_NEWLINE + message;
     }
 
     static String getExecutionStepMessage(int index, String message) {
@@ -329,11 +302,11 @@ public interface CoreFormatter {
         if (isBlank(message)) {
             //TODO Java13-14 instanceof + switch expression.
             var type = "";
-            if (data instanceof List && EmptiableFunctions.isEmpty((List)data)) {
+            if (data instanceof List listData && EmptiablePredicates.isEmpty(listData)) {
                 type = "(List)";
             }
 
-            if (data instanceof Map && EmptiableFunctions.isEmpty((Map)data)) {
+            if (data instanceof Map mapData && EmptiablePredicates.isEmpty(mapData)) {
                 type = "(Map)";
             }
 
@@ -407,7 +380,7 @@ public interface CoreFormatter {
         var message = "";
         var data = isEqualToExpected(number, expected, parameterName);
         if (DataPredicates.isInvalidOrFalse(data)) {
-            message += data.object;
+            message += data.OBJECT();
         }
 
         return getNamedErrorMessageOrEmpty("isEqualToExpectedMessage", message);
@@ -417,7 +390,7 @@ public interface CoreFormatter {
         var message = "";
         var data = isLessThanExpected(number, expected, parameterName);
         if (DataPredicates.isInvalidOrFalse(data)) {
-            message += data.object;
+            message += data.OBJECT();
         }
 
         return getNamedErrorMessageOrEmpty("isLessThanExpectedMessage", message);
@@ -427,7 +400,7 @@ public interface CoreFormatter {
         var message = "";
         var data = isMoreThanExpected(number, expected, parameterName);
         if (DataPredicates.isInvalidOrFalse(data)) {
-            message += data.object;
+            message += data.OBJECT();
         }
 
         return getNamedErrorMessageOrEmpty("isMoreThanExpectedMessage", message);
@@ -460,13 +433,13 @@ public interface CoreFormatter {
 
         final var parameterName = "Actual Command amount";
         final var minData = isLessThanExpected(length, range.min, parameterName);
-        if (!minData.status) {
-            message += minData.object;
+        if (!minData.STATUS()) {
+            message += minData.OBJECT();
         }
 
         final var maxData = isMoreThanExpected(length, range.max, parameterName);
-        if (!maxData.status) {
-            message += maxData.object;
+        if (!maxData.STATUS()) {
+            message += maxData.OBJECT();
         }
 
         return message;
@@ -521,46 +494,6 @@ public interface CoreFormatter {
         return prefix + status + suffix;
     }
 
-    static <T> String getInvokeMethodCoreMessage(Exception exception, String message, String returnType, String parameterTypes) {
-        final var endLine = CoreFormatterConstants.END_LINE;
-        return ExceptionFunctions.isException(exception) ? (
-            String.join(
-                endLine,
-                message,
-                "An Exception(" + exception.getClass() + ") has occurred",
-                "Exception Message:\n" + exception.getMessage(),
-                "Cause: " + exception.getCause(),
-                "Method parameter types: " + parameterTypes,
-                "Result is of type " + returnType
-            ) + endLine
-        ) : CoreFormatterConstants.EMPTY;
-    }
-
-    static String getInvokeMethodCommonMessage(InvokeCommonMessageParametersData data, Exception exception) {
-        return (CoreUtilities.areNotNull(data, exception) && CoreUtilities.areNotBlank(data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)) ? (
-            getInvokeMethodCoreMessage(exception, data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)
-        ) : "Data parameter" + CoreFormatterConstants.WAS_NULL;
-    }
-
-    static String getInvokeMethodParameterizedMessage(InvokeParameterizedMessageData data, Exception exception) {
-        if (CoreUtilities.areAnyNull(data, exception) || CoreUtilities.areAnyBlank(data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE)) {
-            return "Data parameter" + CoreFormatterConstants.WAS_NULL;
-        }
-
-        final var parameter = data.parameter;
-        final var parameterMessage = (isNotBlank(parameter) ? "Parameter was specified: " + parameter : "Parameter wasn't specified") + CoreFormatterConstants.END_LINE;
-        final var invokeMessage = getInvokeMethodCoreMessage(exception, data.MESSAGE, data.PARAMETER_TYPES, data.RETURN_TYPE);
-        return isNotBlank(invokeMessage) ? invokeMessage + parameterMessage : CoreFormatterConstants.EMPTY;
-    }
-
-    static Function<Exception, String> getInvokeMethodCommonMessageFunction(InvokeCommonMessageParametersData data) {
-        return exception -> CoreUtilities.areAnyNull(data, exception) ? getInvokeMethodCommonMessage(data, exception) : CoreFormatterConstants.PARAMETER_ISSUES;
-    }
-
-    static Function<Exception, String> getInvokeMethodParameterizedMessageFunction(InvokeParameterizedMessageData data) {
-        return exception -> CoreUtilities.areAnyNull(data, exception) ? getInvokeMethodParameterizedMessage(data, exception) : "Data or exception" + CoreFormatterConstants.WAS_NULL;
-    }
-
     static String isNullOrEmptyListMessageWithName(List<?> list, String parameterName) {
         var message = isNullMessageWithName(list, parameterName);
         final var name = (isBlank(parameterName) ? "List" : parameterName);
@@ -578,7 +511,7 @@ public interface CoreFormatter {
     static String getContainsIndexMessageWithName(List<?> list, int index, String parameterName) {
         var message = isNullOrEmptyListMessageWithName(list, parameterName);
         if (isBlank(message)) {
-            if (!AmountPredicates.hasIndex(list::size, index)) {
+            if (BooleanUtilities.isFalse(AmountPredicates.hasIndex(list::size, index))) {
                 message += "List doesn't contain index: " + index;
             }
         }
@@ -674,7 +607,7 @@ public interface CoreFormatter {
         if (isBlank(message) && !Objects.equals(left, right)) {
             message += (
                 (
-                    CoreUtilities.areAnyBlank(leftDescriptor, rightDescriptor) ? "The two objects" : (leftDescriptor + " and " + rightDescriptor)
+                    StringUtilities.areAnyBlank(leftDescriptor, rightDescriptor) ? "The two objects" : (leftDescriptor + " and " + rightDescriptor)
                 ) + " are equal" + CoreFormatterConstants.END_LINE
             );
         }
@@ -731,9 +664,9 @@ public interface CoreFormatter {
     static <T> String getValidNonFalseAndValidContainedMessage(Data<T> data, Function<T, String> validator) {
         var message = isInvalidOrFalseMessage(data);
         if (isBlank(message)) {
-            final var validatorMessage = validator.apply(data.object);
+            final var validatorMessage = validator.apply(data.OBJECT());
             if (isNotBlank(validatorMessage)) {
-                message += validator.apply(data.object);
+                message += validator.apply(data.OBJECT());
             }
         }
 
@@ -743,7 +676,7 @@ public interface CoreFormatter {
     static <T> String getValidNonFalseAndValidContainedMessage(Data<T> data, Predicate<T> validator) {
         var message = isInvalidOrFalseMessage(data);
         if (isBlank(message)) {
-            message += isFalseMessageWithName(validator.test(data.object), "Validator test");
+            message += isFalseMessageWithName(validator.test(data.OBJECT()), "Validator test");
         }
 
         return getNamedErrorMessageOrEmpty("getValidNonFalseAndValidContainedMessage", message);
@@ -775,7 +708,7 @@ public interface CoreFormatter {
         }
 
         if (isBlank(message)) {
-            message += isNullOrEmptyListMessageWithName(listData.object, "List");
+            message += isNullOrEmptyListMessageWithName(listData.OBJECT(), "List");
         }
 
         return getNamedErrorMessageOrEmpty("isOfTypeNonEmptyMessage", message);

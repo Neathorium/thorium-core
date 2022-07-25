@@ -1,6 +1,6 @@
 package com.neathorium.thorium.core.namespaces.validators;
 
-import com.neathorium.thorium.core.records.MethodMessageData;
+import com.neathorium.thorium.core.data.records.MethodMessageData;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -11,8 +11,8 @@ public interface MethodMessageDataValidators {
         var message = CoreFormatter.isNullMessageWithName(data, baseName);
         if (isBlank(message)) {
             message += (
-                CoreFormatter.isBlankMessageWithName(data.message, baseName + " Message") +
-                CoreFormatter.isBlankMessageWithName(data.nameof, baseName + " Name of")
+                CoreFormatter.isBlankMessageWithName(data.MESSAGE(), baseName + " Message") +
+                CoreFormatter.isBlankMessageWithName(data.NAMEOF(), baseName + " Name of")
             );
         }
 

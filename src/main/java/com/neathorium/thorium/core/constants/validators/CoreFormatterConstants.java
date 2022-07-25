@@ -52,7 +52,6 @@ public abstract class CoreFormatterConstants {
     public static final String COLON_NEWLINE = COLON + NEW_LINE;
     public static final String PARAMETER_ISSUES_LINE = PARAMETER_ISSUES + COLON_NEWLINE;
     public static final String VOID_CLASS_GENERIC = Void.class.toGenericString();
-    public static final String WAITING_FAILED = "Waiting failed" + COLON_NEWLINE;
     public static final String WAITING_SUCCESSFUL = "Waiting" + WAS_SUCCESSFUL + NEW_LINE;
 
     public static final String VALUE_DOES = "Value does ";

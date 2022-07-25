@@ -3,7 +3,7 @@ package com.neathorium.thorium.core.formatter;
 import com.neathorium.thorium.core.constants.CommandRangeDataConstants;
 import com.neathorium.thorium.core.constants.formatter.NumberConditionDataConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.DataFunctions;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
 import org.junit.jupiter.api.Assertions;
 
@@ -65,7 +65,7 @@ public class FormatterTests {
     void isNumberConditionCoreWithDefaultCommandRangeTest() {
         final var min = CommandRangeDataConstants.DEFAULT_RANGE.min;
         final var result = CoreFormatter.isNumberConditionCore(min, 0, "Range minimum", NumberConditionDataConstants.MORE_THAN);
-        Assertions.assertTrue(result.status, result.object + " Message:  " + result.message);
+        Assertions.assertTrue(result.STATUS(), result.OBJECT() + " Message:  " + result.MESSAGE());
     }
 
     @ParameterizedTest(name = "{0}")
@@ -73,7 +73,7 @@ public class FormatterTests {
     public void isLessThanExpectedTest(String name, int number, int expected, String parameterName, boolean expectedStatus, String expectedMessage) {
         final var result = CoreFormatter.isLessThanExpected(number, expected, parameterName);
         final var message = DataFunctions.getFormattedMessage(result);
-        Assertions.assertTrue((Objects.equals(result.status, expectedStatus) && Objects.equals(message, expectedMessage)), message);
+        Assertions.assertTrue((Objects.equals(result.STATUS(), expectedStatus) && Objects.equals(message, expectedMessage)), message);
     }
 
     @ParameterizedTest(name = "{0}")

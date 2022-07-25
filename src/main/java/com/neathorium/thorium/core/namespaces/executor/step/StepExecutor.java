@@ -2,35 +2,35 @@ package com.neathorium.thorium.core.namespaces.executor.step;
 
 import com.neathorium.thorium.core.constants.CoreConstants;
 import com.neathorium.thorium.core.constants.ExecutorConstants;
-import com.neathorium.thorium.core.constants.wait.WaitConstants;
-import com.neathorium.thorium.core.exceptions.ArgumentNullException;
-import com.neathorium.thorium.core.extensions.interfaces.functional.QuadFunction;
-import com.neathorium.thorium.core.extensions.interfaces.functional.TriPredicate;
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.DataSupplier;
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.IGetMessage;
-import com.neathorium.thorium.core.extensions.namespaces.CoreUtilities;
-import com.neathorium.thorium.core.extensions.namespaces.NullableFunctions;
-import com.neathorium.thorium.core.extensions.namespaces.concurrent.CompletableFutureExtensions;
-import com.neathorium.thorium.core.namespaces.DataFactoryFunctions;
+import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
+import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.data.interfaces.DataSupplier;
 import com.neathorium.thorium.core.namespaces.DataSupplierExecutionFunctions;
 import com.neathorium.thorium.core.namespaces.exception.TaskExceptionHandlers;
-import com.neathorium.thorium.core.namespaces.factories.DataSupplierFactory;
-import com.neathorium.thorium.core.namespaces.executor.ExecutorFunctionDataFactory;
 import com.neathorium.thorium.core.namespaces.executor.ExecutionParametersDataFactory;
 import com.neathorium.thorium.core.namespaces.executor.ExecutionResultDataFactory;
 import com.neathorium.thorium.core.namespaces.executor.ExecutionStateDataFactory;
 import com.neathorium.thorium.core.namespaces.executor.ExecutionStepsDataFactory;
 import com.neathorium.thorium.core.namespaces.executor.Executor;
+import com.neathorium.thorium.core.namespaces.executor.ExecutorFunctionDataFactory;
+import com.neathorium.thorium.core.namespaces.factories.DataSupplierFactory;
 import com.neathorium.thorium.core.namespaces.formatter.executor.StepExecutorFormatters;
-import com.neathorium.thorium.core.namespaces.task.TaskUtilities;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.namespaces.task.TaskFunctions;
+import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
 import com.neathorium.thorium.core.records.SimpleMessageData;
 import com.neathorium.thorium.core.records.executor.ExecutionParametersData;
 import com.neathorium.thorium.core.records.executor.ExecutionResultData;
 import com.neathorium.thorium.core.records.executor.ExecutionStateData;
 import com.neathorium.thorium.core.records.executor.ExecutionStepsData;
-import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-import com.neathorium.thorium.core.namespaces.validators.CoreFormatter;
+import com.neathorium.thorium.core.wait.constants.WaitConstants;
+import com.neathorium.thorium.exceptions.exception.ArgumentNullException;
+import com.neathorium.thorium.java.extensions.interfaces.functional.QuadFunction;
+import com.neathorium.thorium.java.extensions.interfaces.functional.TriPredicate;
+import com.neathorium.thorium.java.extensions.interfaces.functional.boilers.IGetMessage;
+import com.neathorium.thorium.java.extensions.namespaces.concurrent.CompletableFutureExtensions;
+import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -62,7 +62,7 @@ public interface StepExecutor {
         ExecutionParametersData<Function<Void, Data<?>>, DataSupplier<ExecutionResultData<ReturnType>>> execution
     ) {
         final var result = execute(execution, ExecutionStateDataFactory.getWithDefaults(), stepsData.steps).apply(stepsData.dependency);
-        return DataFactoryFunctions.replaceObject(result, result.object.result);
+        return DataFactoryFunctions.replaceObject(result, result.OBJECT().result);
     }
 
     private static <ReturnType> DataSupplier<ReturnType> executeData(
@@ -133,7 +133,7 @@ public interface StepExecutor {
     }
 
     static <ReturnType> DataSupplier<ExecutionResultData<ReturnType>> execute(IGetMessage stepMessage, ExecutionStateData stateData, DataSupplier<?>... steps) {
-        final var localStateData = (NullableFunctions.isNotNull(stateData.indices) && CoreUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
+        final var localStateData = (NullablePredicates.isNotNull(stateData.indices) && BooleanUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
         return DataSupplierFactory.get(Executor.execute(
             ExecutionParametersDataFactory.getWithDefaultRange(
                 ExecutorFunctionDataFactory.getWithExecuteParametersDataAndDefaultExitCondition(stepMessage, ExecutorConstants.DEFAULT_EXECUTION_DATA),
@@ -145,7 +145,7 @@ public interface StepExecutor {
     }
 
     static <ReturnType> DataSupplier<ExecutionResultData<ReturnType>> execute(String message, ExecutionStateData stateData, DataSupplier<?>... steps) {
-        final var localStateData = (NullableFunctions.isNotNull(stateData) && NullableFunctions.isNotNull(stateData.indices) && CoreUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
+        final var localStateData = (NullablePredicates.isNotNull(stateData) && NullablePredicates.isNotNull(stateData.indices) && BooleanUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
         return DataSupplierFactory.get(Executor.execute(
             ExecutionParametersDataFactory.getWithDefaultRange(
                 ExecutorFunctionDataFactory.getWithSpecificMessage(message),
@@ -157,7 +157,7 @@ public interface StepExecutor {
     }
 
     static <ReturnType> DataSupplier<ExecutionResultData<ReturnType>> execute(QuadFunction<ExecutionStateData, String, Integer, Integer, String> messageHandler, ExecutionStateData stateData, DataSupplier<?>... steps) {
-        final var localStateData = (NullableFunctions.isNotNull(stateData.indices) && CoreUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
+        final var localStateData = (NullablePredicates.isNotNull(stateData.indices) && BooleanUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
         return DataSupplierFactory.get(Executor.execute(
             ExecutionParametersDataFactory.getWithTwoCommandsRange(
                 ExecutorFunctionDataFactory.getWithDefaultExitConditionAndMessageData(messageHandler),
@@ -169,14 +169,14 @@ public interface StepExecutor {
     }
 
     static <ReturnType> DataSupplier<ExecutionResultData<ReturnType>> execute(ExecutionStateData stateData, DataSupplier<?>... steps) {
-        final var localStateData = (NullableFunctions.isNotNull(stateData.indices) && CoreUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
+        final var localStateData = (NullablePredicates.isNotNull(stateData.indices) && BooleanUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
         return DataSupplierFactory.get(Executor.execute(ExecutionParametersDataFactory.getWithDefaultFunctionDataAndDefaultRange(Executor::execute), localStateData, steps));
     }
 
 
     static <ReturnType> DataSupplier<ExecutionResultData<ReturnType>> conditionalSequence(TriPredicate<Data<?>, Integer, Integer> guard, ExecutionStateData stateData, DataSupplier<?> before, DataSupplier<?> after) {
         final DataSupplier<?>[] steps = Arrays.asList(before, after).toArray(new DataSupplier<?>[0]);
-        final var localStateData = (NullableFunctions.isNotNull(stateData.indices) && CoreUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
+        final var localStateData = (NullablePredicates.isNotNull(stateData.indices) && BooleanUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
         return DataSupplierFactory.get(Executor.execute(
             ExecutionParametersDataFactory.getWithTwoCommandsRange(
                 ExecutorFunctionDataFactory.getWithSpecificMessageDataAndBreakCondition(new SimpleMessageData(CoreFormatterConstants.EXECUTION_ENDED), guard),
@@ -189,7 +189,7 @@ public interface StepExecutor {
 
     static <T, U, ReturnType> DataSupplier<ExecutionResultData<ReturnType>> conditionalSequence(ExecutionStateData stateData, DataSupplier<T> before, DataSupplier<U> after, Class<ReturnType> clazz) {
         final DataSupplier<?>[] steps = Arrays.asList(before, after).toArray(new DataSupplier<?>[0]);
-        final var localStateData = (NullableFunctions.isNotNull(stateData.indices) && CoreUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
+        final var localStateData = (NullablePredicates.isNotNull(stateData.indices) && BooleanUtilities.isFalse(stateData.indices.isEmpty())) ? stateData : ExecutionStateDataFactory.getWith(stateData.executionMap, steps.length);
         return DataSupplierFactory.get(Executor.execute(
             ExecutionParametersDataFactory.getWithDefaultFunctionDataAndTwoCommandRange(Executor::execute),
             localStateData,
@@ -223,31 +223,31 @@ public interface StepExecutor {
 
     static Data<Boolean> execute(int duration, DataSupplier<?>... steps) {
         final var nameof = "execute";
-        if (NullableFunctions.isNull(steps) || (steps.length < 2) || (steps.length > 3) || (duration < 300)) {
+        if (NullablePredicates.isNull(steps) || (steps.length < 2) || (steps.length > 3) || (duration < 300)) {
             throw new ArgumentNullException("x");
         }
 
-        final var tasks = TaskUtilities.getTaskListWithTimeouts(duration, steps);
+        final var tasks = TaskFunctions.getTaskListWithTimeouts(duration, steps);
         final var startTime = WaitConstants.CLOCK.instant();
-        final var all = CompletableFutureExtensions.allOfTerminateOnFailureTimed(duration, TaskUtilities.getTaskArray(tasks));
+        final var all = CompletableFutureExtensions.allOfTerminateOnFailureTimed(duration, TaskFunctions.getTaskArray(tasks));
         final var result = TaskExceptionHandlers.futureHandler(all);
         final var data = StepExecutorFormatters.getExecuteAllParallelTimedMessageData(tasks, all, result, startTime, WaitConstants.CLOCK.instant(), duration);
-        final var status = data.status;
-        return DataFactoryFunctions.getBoolean(status, nameof, data.message.message, result.exception);
+        final var status = data.STATUS();
+        return DataFactoryFunctions.getBoolean(status, nameof, data.MESSAGE().MESSAGE(), result.EXCEPTION());
     }
 
     static Data<Boolean> executeEndOnAnyResult(int duration, DataSupplier<?>... steps) {
         final var nameof = "executeEndOnAnyResult";
-        if (NullableFunctions.isNull(steps) || (steps.length < 2) || (steps.length > 3) || (duration < 300)) {
+        if (NullablePredicates.isNull(steps) || (steps.length < 2) || (steps.length > 3) || (duration < 300)) {
             throw new ArgumentNullException("x");
         }
 
-        final var tasks = TaskUtilities.getTaskListWithTimeouts(duration, steps);
+        final var tasks = TaskFunctions.getTaskListWithTimeouts(duration, steps);
         final var startTime = WaitConstants.CLOCK.instant();
-        final var all = CompletableFutureExtensions.anyOfTerminateOnFailureTimed(duration, TaskUtilities.getTaskArray(tasks));
+        final var all = CompletableFutureExtensions.anyOfTerminateOnFailureTimed(duration, TaskFunctions.getTaskArray(tasks));
         final var result = TaskExceptionHandlers.futureHandler(all);
         final var data = StepExecutorFormatters.getExecuteAnyParallelTimedMessageData(tasks, all, result, startTime, WaitConstants.CLOCK.instant(), duration);
-        final var status = data.status;
-        return DataFactoryFunctions.getBoolean(status, nameof, data.message.message, result.exception);
+        final var status = data.STATUS();
+        return DataFactoryFunctions.getBoolean(status, nameof, data.MESSAGE().MESSAGE(), result.EXCEPTION());
     }
 }

@@ -1,7 +1,7 @@
 package com.neathorium.thorium.core.namespaces.factories;
 
-import com.neathorium.thorium.core.extensions.interfaces.functional.boilers.DataSupplier;
-import com.neathorium.thorium.core.records.Data;
+import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.data.interfaces.DataSupplier;
 
 import java.util.function.Function;
 
