@@ -13,8 +13,8 @@
         <java.version>17</java.version>
         <!--Dependency Versions-->
         <thorium-exceptions.version>e695205e5fe63212fac4803bcbf4734c7105cb72</thorium-exceptions.version>
-        <thorium-java-extensions.version>be662029bfe3ee9005ec848f5e8c14205894b5db</thorium-java-extensions.version>
-        <thorium-data.version>05d1df034fc8cb617937c26477034612ab0ce28c</thorium-data.version>
+        <thorium-java-extensions.version>371717b511c6675b666e9f3e2f78a135c299d294</thorium-java-extensions.version>
+        <thorium-data.version>3142ed43e7e3a76194967265cdb65eb845868826</thorium-data.version>
         <selenium.version>3.12.0</selenium.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
