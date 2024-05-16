@@ -4,18 +4,16 @@ import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.data.interfaces.DataSupplier;
 import com.neathorium.thorium.core.records.executor.ExecutionResultData;
 import com.neathorium.thorium.core.records.executor.ExecutionStateData;
+import com.neathorium.thorium.core.wait.interfaces.IWaitTask;
 import com.neathorium.thorium.core.wait.records.tasks.common.WaitTaskCommonData;
 import com.neathorium.thorium.core.wait.records.tasks.common.WaitTaskStateData;
-import com.neathorium.thorium.core.wait.records.tasks.WaitTask;
+
 
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
-public final class WaitRepeatTask<V> extends WaitTask<ExecutionStateData, DataSupplier<ExecutionResultData<V>>, Data<ExecutionResultData<V>>> {
-    public WaitRepeatTask(
-        ScheduledExecutorService scheduler,
-        WaitTaskCommonData<ExecutionStateData, DataSupplier<ExecutionResultData<V>>, Data<ExecutionResultData<V>>> commonData,
-        WaitTaskStateData<ExecutionStateData, Data<ExecutionResultData<V>>> stateData
-    ) {
-        super(scheduler, commonData, stateData);
-    }
-}
+public record WaitRepeatTask<ConditionType>(
+    ScheduledExecutorService SCHEDULER,
+    WaitTaskCommonData<ExecutionStateData, DataSupplier<ExecutionResultData<ConditionType>>, Data<ExecutionResultData<ConditionType>>> COMMON_DATA,
+    AtomicReference<WaitTaskStateData<ExecutionStateData, Data<ExecutionResultData<ConditionType>>>> STATE_DATA
+) implements IWaitTask<ExecutionStateData, DataSupplier<ExecutionResultData<ConditionType>>, Data<ExecutionResultData<ConditionType>>> {}

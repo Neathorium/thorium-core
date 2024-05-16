@@ -7,6 +7,7 @@ import com.neathorium.thorium.core.namespaces.validators.HandlerResultDataValida
 import com.neathorium.thorium.core.records.HandleResultData;
 import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
 import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
+import org.apache.commons.lang3.StringUtils;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -14,7 +15,7 @@ public interface ExceptionHandlers {
     static <CastParameterType, ReturnType> Data<ReturnType> classCastHandler(HandleResultData<CastParameterType, ReturnType> data) {
         final var nameof = "classCastHandler";
         final var errorMessage = HandlerResultDataValidator.isInvalidHandlerResultDataMessage(data);
-        if (isNotBlank(errorMessage)) {
+        if (StringUtils.isNotBlank(errorMessage)) {
             return DataFactoryFunctions.getInvalidWith(null, nameof, errorMessage);
         }
 
@@ -27,6 +28,7 @@ public interface ExceptionHandlers {
         }
 
         final var status = ExceptionFunctions.isNonException(exception);
-        return DataFactoryFunctions.getWith(result, status, status ? CoreFormatterConstants.INVOCATION_SUCCESSFUL : CoreFormatterConstants.INVOCATION_EXCEPTION, exception);
+        final var message = status ? CoreFormatterConstants.INVOCATION_SUCCESSFUL : CoreFormatterConstants.INVOCATION_EXCEPTION;
+        return DataFactoryFunctions.getWith(result, status, nameof, message, exception);
     }
 }

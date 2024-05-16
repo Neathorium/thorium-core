@@ -1,10 +1,7 @@
 package com.neathorium.thorium.core.constants.clipboard;
 
-import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
-
-import com.neathorium.thorium.core.records.caster.BasicCastData;
+import com.neathorium.thorium.core.constants.CastDataConstants;
 import com.neathorium.thorium.core.records.clipboard.ClipboardData;
-import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -15,13 +12,5 @@ import java.util.Map;
 public abstract class ClipboardConstants {
     public static final Clipboard CLIPBOARD = Toolkit.getDefaultToolkit().getSystemClipboard();
     public static final Map<String, String> COMMANDS = new HashMap<>();
-    public static final ClipboardData<String> CLIPBOARD_DATA = new ClipboardData<>(
-        new BasicCastData<>(
-            CoreFormatterConstants.EMPTY,
-            StringUtilities::castToString
-        ),
-        CLIPBOARD,
-        null,
-        DataFlavor.stringFlavor
-    );
+    public static final ClipboardData<String> CLIPBOARD_DATA = new ClipboardData<>(CastDataConstants.CLIPBOARD_STRING, ClipboardConstants.CLIPBOARD, null, DataFlavor.stringFlavor);
 }

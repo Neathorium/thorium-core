@@ -6,8 +6,8 @@ import com.neathorium.thorium.core.wait.constants.WaitFormatterConstants;
 import com.neathorium.thorium.core.wait.exceptions.WrappedExecutionException;
 import com.neathorium.thorium.core.wait.exceptions.WrappedThreadInterruptedException;
 import com.neathorium.thorium.core.wait.exceptions.WrappedTimeoutException;
+import com.neathorium.thorium.core.wait.interfaces.IWaitTask;
 import com.neathorium.thorium.core.wait.namespaces.formatters.WaitExceptionFormatters;
-import com.neathorium.thorium.core.wait.records.tasks.WaitTask;
 import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
@@ -18,7 +18,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.UnaryOperator;
 
 public interface WaitExceptionHandlers {
-    static Data<UnaryOperator<String>> futureInformationHandler(WaitTask<?, ?, ?> task, Runnable runnable) {
+    static Data<UnaryOperator<String>> futureInformationHandler(IWaitTask<?, ?, ?> task, Runnable runnable) {
+        final var nameof = "WaitExceptionHandlers.futureInformationHandler";
         var exception = ExceptionConstants.EXCEPTION;
         UnaryOperator<String> formatter = null;
         try {
@@ -29,7 +30,7 @@ public interface WaitExceptionHandlers {
             formatter = WaitExceptionFormatters::getWaitInterruptMessage;
         } catch (CancellationException ex) {
             exception = ex;
-            if (BooleanUtilities.isFalse(task.STATE_DATA.data.STATUS())) {
+            if (BooleanUtilities.isFalse(task.STATE_DATA().get().DATA().STATUS())) {
                 formatter = WaitExceptionFormatters::getWaitCancellationWithoutResultMessage;
             }
         } catch (WrappedExecutionException ex) {
@@ -41,6 +42,7 @@ public interface WaitExceptionHandlers {
         }
 
         final var message =  NullablePredicates.isNotNull(formatter) ? formatter.apply(exception.getMessage()) : WaitFormatterConstants.TASK_SUCCESSFULLY_ENDED;
-        return DataFactoryFunctions.getWith(formatter, task.STATE_DATA.data.STATUS(), "futureInformationHandler", message, exception);
+        final var status = task.STATE_DATA().get().DATA().STATUS();
+        return DataFactoryFunctions.getWith(formatter, status, nameof, message, exception);
     }
 }

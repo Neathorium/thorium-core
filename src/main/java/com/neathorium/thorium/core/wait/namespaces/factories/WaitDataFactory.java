@@ -16,15 +16,16 @@ public interface WaitDataFactory {
     }
 
     static <DependencyType, U, ReturnType> WaitData<DependencyType, U, ReturnType> getWithIntervalAndTimeout(Function<DependencyType, U> function, Predicate<ReturnType> exitCondition, String conditionMessage, int interval, int timeout) {
-        return getWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));
+        return WaitDataFactory.getWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));
     }
 
     static <DependencyType, U, ReturnType> WaitData<DependencyType, U, ReturnType> getWithSleepDuration(Function<DependencyType, U> function, Predicate<ReturnType> exitCondition, int duration) {
-        return getWithIntervalAndTimeout(function, exitCondition, "Sleeping for " + duration + " milliseconds" + CoreFormatterConstants.END_LINE, 0, duration);
+        final var message = "Sleeping for " + duration + " milliseconds" + CoreFormatterConstants.END_LINE;
+        return WaitDataFactory.getWithIntervalAndTimeout(function, exitCondition, message, 0, duration);
     }
 
     static <DependencyType, U, ReturnType> WaitData<DependencyType, U, ReturnType> getWithDefaultTimeData(Function<DependencyType, U> function, Predicate<ReturnType> exitCondition, String conditionMessage) {
-        return getWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getDefault());
+        return WaitDataFactory.getWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getDefault());
     }
 
     static <U, ReturnType> VoidWaitData<U, ReturnType> getVoidWith(Function<Void, U> function, Predicate<ReturnType> exitCondition, String conditionMessage, WaitTimeData timeData) {
@@ -36,26 +37,28 @@ public interface WaitDataFactory {
     }
 
     static <U, ReturnType> VoidWaitData<U, ReturnType> getVoidWithIntervalAndTimeout(Function<Void, U> function, Predicate<ReturnType> exitCondition, String conditionMessage, int interval, int timeout) {
-        return getVoidWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));
+        return WaitDataFactory.getVoidWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));
     }
 
     static <U, ReturnType> VoidWaitData<U, ReturnType> getVoidWithSleepDuration(Function<Void, U> function, Predicate<ReturnType> exitCondition, int duration) {
-        return getVoidWithIntervalAndTimeout(function, exitCondition, "Sleeping for " + duration + " milliseconds" + CoreFormatterConstants.END_LINE, 0, duration);
+        final var message = "Sleeping for " + duration + " milliseconds" + CoreFormatterConstants.END_LINE;
+        return WaitDataFactory.getVoidWithIntervalAndTimeout(function, exitCondition, message, 0, duration);
     }
 
     static <U, ReturnType> VoidWaitData<U, ReturnType> getVoidWithDefaultTimeData(Function<Void, U> function, Predicate<ReturnType> exitCondition, String conditionMessage) {
-        return getVoidWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getDefault());
+        return WaitDataFactory.getVoidWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getDefault());
     }
 
     static <U, ReturnType> VoidWaitData<U, ReturnType> getVoidWithIntervalAndTimeout(Supplier<U> function, Predicate<ReturnType> exitCondition, String conditionMessage, int interval, int timeout) {
-        return getVoidWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));
+        return WaitDataFactory.getVoidWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getWithDefaultClock(interval, timeout));
     }
 
     static <U, ReturnType> VoidWaitData<U, ReturnType> getVoidWithSleepDuration(Supplier<U> function, Predicate<ReturnType> exitCondition, int duration) {
-        return getVoidWithIntervalAndTimeout(function, exitCondition, "Sleeping for " + duration + " milliseconds" + CoreFormatterConstants.END_LINE, 0, duration);
+        final var message = "Sleeping for " + duration + " milliseconds" + CoreFormatterConstants.END_LINE;
+        return WaitDataFactory.getVoidWithIntervalAndTimeout(function, exitCondition, message, 0, duration);
     }
 
     static <U, ReturnType> VoidWaitData<U, ReturnType> getVoidWithDefaultTimeData(Supplier<U> function, Predicate<ReturnType> exitCondition, String conditionMessage) {
-        return getVoidWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getDefault());
+        return WaitDataFactory.getVoidWith(function, exitCondition, conditionMessage, WaitTimeDataFactory.getDefault());
     }
 }
