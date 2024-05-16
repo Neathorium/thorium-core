@@ -10,20 +10,28 @@ import com.neathorium.thorium.core.wait.records.tasks.WaitRepeatTask;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 public interface WaitRepeatTaskFactory {
     static <ReturnType> WaitRepeatTask<ReturnType> getWith(
         ScheduledExecutorService scheduler,
         WaitTaskCommonData<ExecutionStateData, DataSupplier<ExecutionResultData<ReturnType>>, Data<ExecutionResultData<ReturnType>>> commonData,
-        WaitTaskStateData<ExecutionStateData, Data<ExecutionResultData<ReturnType>>> stateData
+        AtomicReference<WaitTaskStateData<ExecutionStateData, Data<ExecutionResultData<ReturnType>>>> stateData
     ) {
         return new WaitRepeatTask<>(scheduler, commonData, stateData);
     }
 
     static <ReturnType> WaitRepeatTask<ReturnType> getWithDefaultScheduler(
         WaitTaskCommonData<ExecutionStateData, DataSupplier<ExecutionResultData<ReturnType>>, Data<ExecutionResultData<ReturnType>>> commonData,
-        WaitTaskStateData<ExecutionStateData, Data<ExecutionResultData<ReturnType>>> stateData
+        AtomicReference<WaitTaskStateData<ExecutionStateData, Data<ExecutionResultData<ReturnType>>>> stateData
     ) {
-        return getWith(Executors.newSingleThreadScheduledExecutor(), commonData, stateData);
+        return WaitRepeatTaskFactory.getWith(Executors.newSingleThreadScheduledExecutor(), commonData, stateData);
+    }
+
+    static <ReturnType> WaitRepeatTask<ReturnType> replaceStateData(
+        WaitRepeatTask<ReturnType> task,
+        AtomicReference<WaitTaskStateData<ExecutionStateData, Data<ExecutionResultData<ReturnType>>>> data
+    ) {
+        return WaitRepeatTaskFactory.getWith(task.SCHEDULER(), task.COMMON_DATA(), data);
     }
 }

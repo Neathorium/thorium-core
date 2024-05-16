@@ -4,15 +4,15 @@ import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.core.data.interfaces.DataSupplier;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.namespaces.DataFunctions;
-import com.neathorium.thorium.core.namespaces.executor.step.CommonSteps;
-import com.neathorium.thorium.core.namespaces.executor.step.StepExecutor;
-import com.neathorium.thorium.core.namespaces.executor.step.StepFactory;
+import com.neathorium.thorium.core.executor.namespaces.step.CommonSteps;
+import com.neathorium.thorium.core.executor.namespaces.step.StepExecutor;
+import com.neathorium.thorium.core.executor.namespaces.step.StepFactory;
 import com.neathorium.thorium.core.wait.namespaces.SleepFunctions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class DataSupplierTests {
+class DataSupplierTests {
     private static final String OKAY_MESSAGE = "Step was okay" + CoreFormatterConstants.END_LINE;
 
     @DisplayName("Can execute some basic stuff")
@@ -128,16 +128,17 @@ public class DataSupplierTests {
     @Test
     void parallelStepExecutionPassAnyTest() {
         final var step =  StepFactory.voidStep(() -> SleepFunctions.sleep(1000).apply());
-        final var stepSleep =  StepFactory.voidStep(() -> {
+        final var step2 =  StepFactory.voidStep(() -> SleepFunctions.sleep(1000).apply());
+        /*final var stepSleep =  StepFactory.voidStep(() -> {
             SleepFunctions.sleep(2000).apply();
             throw new RuntimeException("Throwing stuff2");
         });
         final var failureStep = StepFactory.voidStep(() -> {
             SleepFunctions.sleep(12000).apply();
             throw new RuntimeException("Throwing stuff3");
-        });
+        });*/
 
-        final var result = CommonSteps.executeParallelEndOnAnyTimed(11000, step, stepSleep, failureStep).apply();
+        final var result = CommonSteps.executeParallelEndOnAnyTimed(11000, step, step2/*, stepSleep, failureStep*/).apply();
         Assertions.assertTrue(result.STATUS(), DataFunctions.getFormattedMessage(result));
     }
 

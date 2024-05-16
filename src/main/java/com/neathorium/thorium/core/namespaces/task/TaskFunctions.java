@@ -2,6 +2,7 @@ package com.neathorium.thorium.core.namespaces.task;
 
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.data.interfaces.DataSupplier;
+import com.neathorium.thorium.core.wait.records.WaitTimeEntryData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +15,12 @@ public interface TaskFunctions {
         return CompletableFuture.supplyAsync(step.getSupplier());
     }
 
-    private static CompletableFuture<? extends Data<?>> getTimedTask(DataSupplier<?> step, int duration) {
-        return getTask(step).orTimeout(duration, TimeUnit.MILLISECONDS);
+    private static CompletableFuture<? extends Data<?>> getTimedTask(DataSupplier<?> step, WaitTimeEntryData entryData) {
+        return TaskFunctions.getTask(step).orTimeout(entryData.LENGTH(), entryData.TIME_UNIT());
     }
 
-    static Function<DataSupplier<?>, CompletableFuture<? extends Data<?>>> getTimedTask(int duration) {
-        return step -> getTimedTask(step, duration);
+    static Function<DataSupplier<?>, CompletableFuture<? extends Data<?>>> getTimedTask(WaitTimeEntryData entryData) {
+        return step -> TaskFunctions.getTimedTask(step, entryData);
     }
 
     static List<CompletableFuture<? extends Data<?>>> addToList(
@@ -40,12 +41,12 @@ public interface TaskFunctions {
         return tasks;
     }
 
-    static List<CompletableFuture<? extends Data<?>>> getTaskListWithTimeouts(int duration, DataSupplier<?>... steps) {
-        return getTaskList(TaskFunctions.getTimedTask(duration), steps);
+    static List<CompletableFuture<? extends Data<?>>> getTaskListWithTimeouts(WaitTimeEntryData duration, DataSupplier<?>... steps) {
+        return TaskFunctions.getTaskList(TaskFunctions.getTimedTask(duration), steps);
     }
 
     static List<CompletableFuture<? extends Data<?>>> getTaskList(DataSupplier<?>... steps) {
-        return getTaskList(TaskFunctions::getTask, steps);
+        return TaskFunctions.getTaskList(TaskFunctions::getTask, steps);
     }
 
     static CompletableFuture<?>[] getTaskArray(List<CompletableFuture<? extends Data<?>>> list) {

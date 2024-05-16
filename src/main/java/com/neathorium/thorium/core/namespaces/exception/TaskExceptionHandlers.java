@@ -8,6 +8,7 @@ import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
 import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
@@ -17,7 +18,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public interface TaskExceptionHandlers {
     static <T> Data<Boolean> futureHandler(CompletableFuture<T> task) {
-        final var nameof = "futureHandler";
+        final var nameof = "TaskExceptionHandlers.futureHandler";
         if (NullablePredicates.isNull(task)) {
             return DataFactoryFunctions.getInvalidBooleanWith(nameof, "Task parameter" + CoreFormatterConstants.WAS_NULL);
         }
@@ -34,7 +35,7 @@ public interface TaskExceptionHandlers {
     }
 
     static Data<Boolean> futureDataHandler(CompletableFuture<? extends Data<?>> task) {
-        final var nameof = "futureDataHandler";
+        final var nameof = "TaskExceptionHandlers.futureDataHandler";
         if (NullablePredicates.isNull(task)) {
             return DataFactoryFunctions.getInvalidBooleanWith(nameof, "Task parameter" + CoreFormatterConstants.WAS_NULL);
         }
@@ -47,7 +48,7 @@ public interface TaskExceptionHandlers {
             exception = ex;
         }
 
-        final var isNotBlank = NullablePredicates.isNotNull(data) && NullablePredicates.isNotNull(data.MESSAGE()) && isNotBlank(data.MESSAGE().NAMEOF());
+        final var isNotBlank = NullablePredicates.isNotNull(data) && NullablePredicates.isNotNull(data.MESSAGE()) && StringUtils.isNotBlank(data.MESSAGE().NAMEOF());
         return DataFactoryFunctions.getBoolean(
             ExceptionFunctions.isNonException(exception) && DataPredicates.isValidNonFalse(data),
             isNotBlank ? data.MESSAGE().NAMEOF() : nameof,

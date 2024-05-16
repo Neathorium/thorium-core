@@ -5,22 +5,28 @@ import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.namespaces.predicates.DataPredicates;
 import com.neathorium.thorium.core.data.records.Data;
+import com.neathorium.thorium.core.executor.namespaces.step.ParallelStepExecutionExceptionFactory;
 import com.neathorium.thorium.core.namespaces.exception.TaskExceptionHandlers;
+import com.neathorium.thorium.core.wait.records.WaitTimeEntryData;
+import com.neathorium.thorium.exceptions.constants.ExceptionConstants;
+import com.neathorium.thorium.exceptions.namespaces.ExceptionFunctions;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.SizablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 public interface StepExecutorFormatters {
-    private static String getTaskExecutionTimeMessage(Instant startTime, Instant stopTime, int duration) {
+    private static String getTaskExecutionTimeMessage(Instant startTime, Instant stopTime, WaitTimeEntryData entryData) {
         return (
             "\tExecution ran from time(\"" + startTime.toString() + "\") to (\"" + stopTime.toString() + "\")" + CoreFormatterConstants.END_LINE +
-            "\tDuration(\"" + duration + "\" milliseconds), actually ran for " + ChronoUnit.MILLIS.between(startTime, stopTime) + " milliseconds" + CoreFormatterConstants.END_LINE
+            "\tDuration(\"" + entryData.LENGTH() + "\" " + entryData.TIME_UNIT() + "), actually ran for " + ChronoUnit.MILLIS.between(startTime, stopTime) + " milliseconds" + CoreFormatterConstants.END_LINE
         );
     }
 
@@ -51,12 +57,20 @@ public interface StepExecutorFormatters {
         Data<Boolean> result,
         Instant startTime,
         Instant stopTime,
-        int duration
+        WaitTimeEntryData entryData
     ) {
-        final var messageBuilder = new StringBuilder(getTaskExecutionTimeMessage(startTime, stopTime, duration));
+        final var localNameof = StringUtils.isNotBlank(nameof) ? nameof : "StepExecutorFormatters.getExecuteParallelTimedMessageDataCore";
+        final var exceptionList = new ArrayList<Throwable>();
+        final var separator = "    ";
+        final var messageBuilder = new StringBuilder(StepExecutorFormatters.getTaskExecutionTimeMessage(startTime, stopTime, entryData));
         final var done = BooleanUtilities.isFalse(BooleanUtilities.isFalse(handlerTask.isDone()) || DataPredicates.isInvalidOrFalse(result));
+        Exception exception = ExceptionConstants.EXCEPTION;
         if (BooleanUtilities.isFalse(done)) {
-            messageBuilder.append("\t").append(DataFunctions.getFormattedMessage(result));
+            messageBuilder.append(separator).append(DataFunctions.getFormattedMessage(result));
+            exception = result.EXCEPTION();
+            if (ExceptionFunctions.isException(exception)) {
+                exceptionList.add(exception);
+            }
         }
 
         final var length = tasks.size();
@@ -67,21 +81,41 @@ public interface StepExecutorFormatters {
             current = TaskExceptionHandlers.futureDataHandler(tasks.get(index));
             if (DataPredicates.isInvalidOrFalse(current)) {
                 --passed;
+                exception = current.EXCEPTION();
+                if (ExceptionFunctions.isException(exception)) {
+                    exceptionList.add(exception);
+                }
             }
 
-            messageBuilder.append(getTaskIndexedMessage(index + 1, DataFunctions.getStatusMessageFromData(current).replaceAll("\\n\\t", "\n\t\t")));
+            messageBuilder.append(StepExecutorFormatters.getTaskIndexedMessage(index + 1, DataFunctions.getStatusMessageFromData(current).replace("\\n" + separator, "\n" + separator + separator)));
         }
 
-        return DataFactoryFunctions.getBoolean(done && conditionHandler.test(passed), nameof, getAmountFragmentMessage(passed, length) + messageBuilder);
+        final var status = done && conditionHandler.test(passed);
+        final var returnException = BasicPredicates.isZeroOrNonPositive(exceptionList.size()) ? ExceptionConstants.EXCEPTION : ParallelStepExecutionExceptionFactory.getWith(exceptionList);
+        return DataFactoryFunctions.getBoolean(status, localNameof, getAmountFragmentMessage(passed, length) + messageBuilder, returnException);
     }
 
-    static Data<Boolean> getExecuteAllParallelTimedMessageData(List<CompletableFuture<? extends Data<?>>> tasks, CompletableFuture<?> all, Data<Boolean> result, Instant startTime, Instant stopTime, int duration) {
-        final var nameof = "getExecuteAllParallelTimedMessageData";
-        return getExecuteParallelTimedMessageDataCore(nameof, (var passed) -> SizablePredicates.isSizeEqualTo(passed, tasks.size()), tasks, all, result, startTime, stopTime, duration);
+    static Data<Boolean> getExecuteAllParallelTimedMessageData(
+        List<CompletableFuture<? extends Data<?>>> tasks,
+        CompletableFuture<?> all,
+        Data<Boolean> result,
+        Instant startTime,
+        Instant stopTime,
+        WaitTimeEntryData entryData
+    ) {
+        final var nameof = "StepExecutorFormatters.getExecuteAllParallelTimedMessageData";
+        return StepExecutorFormatters.getExecuteParallelTimedMessageDataCore(nameof, (var passed) -> SizablePredicates.isSizeEqualTo(passed, tasks.size()), tasks, all, result, startTime, stopTime, entryData);
     }
 
-    static Data<Boolean> getExecuteAnyParallelTimedMessageData(List<CompletableFuture<? extends Data<?>>> tasks, CompletableFuture<?> all, Data<Boolean> result, Instant startTime, Instant stopTime, int duration) {
-        final var nameof = "getExecuteAnyParallelTimedMessageData";
-        return getExecuteParallelTimedMessageDataCore(nameof, BasicPredicates::isPositiveNonZero, tasks, all, result, startTime, stopTime, duration);
+    static Data<Boolean> getExecuteAnyParallelTimedMessageData(
+        List<CompletableFuture<? extends Data<?>>> tasks,
+        CompletableFuture<?> all,
+        Data<Boolean> result,
+        Instant startTime,
+        Instant stopTime,
+        WaitTimeEntryData entryData
+    ) {
+        final var nameof = "StepExecutorFormatters.getExecuteAnyParallelTimedMessageData";
+        return StepExecutorFormatters.getExecuteParallelTimedMessageDataCore(nameof, BasicPredicates::isPositiveNonZero, tasks, all, result, startTime, stopTime, entryData);
     }
 }

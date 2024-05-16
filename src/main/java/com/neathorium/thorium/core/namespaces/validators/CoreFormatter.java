@@ -19,13 +19,10 @@ import com.neathorium.thorium.java.extensions.namespaces.predicates.EmptiablePre
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -84,10 +81,6 @@ public interface CoreFormatter {
 
     static String isInvalidOrFalseMessage(Data data) {
         return isInvalidOrFalseMessageWithName(data, "Data");
-    }
-
-    static String isInvalidOrFalseMessageE(ExecutionResultData data) {
-        return isNullMessageWithName(data.result, "Result Object");
     }
 
     private static String isValidNonFalseMessageWithName(Data data, String parameterName) {
@@ -188,8 +181,8 @@ public interface CoreFormatter {
         var message = isNullMessageWithName(data, "Execution State Data");
         if (isBlank(message)) {
             message += (
-                isNullMessageWithName(data.executionMap, "Execution Map") +
-                isNullMessageWithName(data.indices, "Indices")
+                isNullMessageWithName(data.EXECUTION_MAP(), "Execution Map") +
+                isNullMessageWithName(data.INDICES(), "Indices")
             );
         }
 
@@ -219,7 +212,7 @@ public interface CoreFormatter {
             return errorMessage;
         }
 
-        final var map = state.executionMap;
+        final var map = state.EXECUTION_MAP();
         final var valueSet = map.values();
         final var passedValueAmount = valueSet.stream().filter(DataPredicates::isValidNonFalse).count();
         final var valuesLength = valueSet.size();
@@ -254,7 +247,7 @@ public interface CoreFormatter {
             return errorMessage;
         }
 
-        final var valueSet = state.executionMap.values();
+        final var valueSet = state.EXECUTION_MAP().values();
         final var passedValueAmount = valueSet.stream().filter(DataPredicates::isValidNonFalse).count();
         final var failedValueAmount = length - passedValueAmount;
         final var builder = new StringBuilder();
@@ -445,24 +438,24 @@ public interface CoreFormatter {
         return message;
     }
 
-    static String getValidCommandMessage(Function<?, ?>[] steps, CommandRangeData range) {
-        var message = isNullMessageWithName(steps, "Steps");
+    static <T, U> String getValidCommandMessage(List<Function<T, U>> steps, CommandRangeData range) {
+        var message = CoreFormatter.isNullMessageWithName(steps, "Steps");
         var length = 0;
-        if (isBlank(message)) {
-            length = steps.length;
-            message += isMoreThanExpectedMessage(length, 0, "Steps Length");
+        if (StringUtils.isBlank(message)) {
+            length = steps.size();
+            message += CoreFormatter.isMoreThanExpectedMessage(length, 0, "Steps Length");
         }
-        if (isBlank(message)) {
-            message += getCommandAmountRangeErrorMessage(length, range);
+        if (StringUtils.isBlank(message)) {
+            message += CoreFormatter.getCommandAmountRangeErrorMessage(length, range);
         }
 
-        if (isBlank(message)) {
+        if (StringUtils.isBlank(message)) {
             var builder = new StringBuilder();
             var current = "";
-            if (isBlank(message)) {
+            if (StringUtils.isBlank(message)) {
                 for (var index = 0; index < length; ++index) {
-                    current = isNullMessageWithName(steps[index], index + ". step");
-                    if (isNotBlank(current)) {
+                    current = CoreFormatter.isNullMessageWithName(steps.get(index), index + ". step");
+                    if (StringUtils.isNotBlank(current)) {
                         builder.append(current);
                     }
                 }
@@ -471,7 +464,11 @@ public interface CoreFormatter {
             message += builder.toString();
         }
 
-        return getNamedErrorMessageOrEmpty("getValidCommandMessage", message);
+        return CoreFormatter.getNamedErrorMessageOrEmpty("getValidCommandMessage", message);
+    }
+
+    static <T, U> String getValidCommandMessage(Function<T, U>[] steps, CommandRangeData range) {
+        return CoreFormatter.getValidCommandMessage(Arrays.asList(steps), range);
     }
 
     static String getCommandAmountRangeErrorMessage(int length, int min, int max) {

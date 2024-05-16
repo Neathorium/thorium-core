@@ -4,8 +4,8 @@ import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
 import com.neathorium.thorium.core.wait.exceptions.WaitTimeoutException;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.namespaces.DataFunctions;
-import com.neathorium.thorium.core.namespaces.executor.step.StepExecutor;
-import com.neathorium.thorium.core.namespaces.executor.step.StepFactory;
+import com.neathorium.thorium.core.executor.namespaces.step.StepExecutor;
+import com.neathorium.thorium.core.executor.namespaces.step.StepFactory;
 import com.neathorium.thorium.core.wait.namespaces.factories.WaitDataFactory;
 import com.neathorium.thorium.core.wait.namespaces.factories.WaitTimeDataFactory;
 import com.neathorium.thorium.core.wait.namespaces.WaitFunctions;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-public class WaitTests {
+class WaitTests {
     private static int count1 = 0;
     private static int increaseAndGetCount1() {
         return ++count1;
@@ -50,7 +50,7 @@ public class WaitTests {
     @DisplayName("Wait Repeat - one always fails second")
     @Test
     void oneFailsSecond() {
-        final var countStep = StepFactory.voidStep((Void nothing) -> DataFactoryFunctions.getBoolean(increaseAndGetCount1() == 3, "test1", "Step was okay"));
+        final var countStep = StepFactory.voidStep((Void nothing) -> DataFactoryFunctions.getBoolean(increaseAndGetCount1() == -1, "test1", "Step was okay"));
         final var trueStringStep = StepFactory.voidStep((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", false, "test2", "StringStep was oookay"));
         final var steps = StepExecutor.executeState("waitRepeat Test result message", countStep, trueStringStep);
         final var waitData = WaitDataFactory.getWith(steps, WaitPredicates::isExecutionValidNonFalse, "Steps passed", WaitTimeDataFactory.getWithDefaultClock(100, 1000));
@@ -78,7 +78,6 @@ public class WaitTests {
         final var steps = StepExecutor.executeState("waitRepeat Test result message", countStep, trueStringStep);
         final var waitData = WaitDataFactory.getWith(steps, WaitPredicates::isExecutionValidNonFalse, "Steps passed", WaitTimeDataFactory.getWithDefaultClock(100, 300000));
         final var result = WaitFunctions.repeatWithDefaultState(waitData);
-
         Assertions.assertTrue(result.STATUS(), DataFunctions.getFormattedMessage(result));
     }
 
