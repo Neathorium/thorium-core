@@ -49,6 +49,11 @@ public interface ParallelStepExecutionExceptionFactory {
         return ParallelStepExecutionExceptionFactory.getWith(message, list);
     }
 
+    static ParallelStepExecutionException getWith(Map<Integer, Throwable> map) {
+        final var message = "Exception occurred during parallel step execution" + CoreFormatterConstants.END_LINE;
+        return ParallelStepExecutionExceptionFactory.getWith(message, map);
+    }
+
     static ParallelStepExecutionException getWith(Throwable... throwables) {
         final List<Throwable> list = NullablePredicates.isNotNull(throwables) ? Arrays.asList(throwables) : List.of();
         return ParallelStepExecutionExceptionFactory.getWith(list);
