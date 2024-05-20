@@ -22,7 +22,7 @@ public class PlatformFunctionsTests {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("getPlatformMapWithUnknownProvider")
-    public void isLessThanExpectedTest(String name, String windowsEntry, String macEntry, String linuxEntry, String unknownEntry, int size) {
+    void isLessThanExpectedTest(String name, String windowsEntry, String macEntry, String linuxEntry, String unknownEntry, int size) {
         final var result = PlatformFunctions.getPlatformMap(windowsEntry, macEntry, linuxEntry);
         Assertions.assertTrue(
             (

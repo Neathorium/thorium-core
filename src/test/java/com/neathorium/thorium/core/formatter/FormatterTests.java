@@ -70,7 +70,7 @@ public class FormatterTests {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("isLessThanExpectedProvider")
-    public void isLessThanExpectedTest(String name, int number, int expected, String parameterName, boolean expectedStatus, String expectedMessage) {
+    void isLessThanExpectedTest(String name, int number, int expected, String parameterName, boolean expectedStatus, String expectedMessage) {
         final var result = CoreFormatter.isLessThanExpected(number, expected, parameterName);
         final var message = DataFunctions.getFormattedMessage(result);
         Assertions.assertTrue((Objects.equals(result.STATUS(), expectedStatus) && Objects.equals(message, expectedMessage)), message);
@@ -78,7 +78,7 @@ public class FormatterTests {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("isLessThanExpectedMessageTestProvider")
-    public void isLessThanExpectedMessageTest(String name, int number, int expected, String parameterName, String expectedMessage) {
+    void isLessThanExpectedMessageTest(String name, int number, int expected, String parameterName, String expectedMessage) {
         final var result = CoreFormatter.isLessThanExpectedMessage(number, expected, parameterName);
         Assertions.assertEquals(expectedMessage, result, "Result didn't equal expected message" + CoreFormatterConstants.END_LINE);
     }

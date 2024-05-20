@@ -10,8 +10,9 @@ import java.util.function.Function;
 
 public interface SleepFunctions {
     private static Data<Boolean> sleepCore(int duration) {
+        final var nameof = "SleepFunctions.sleep";
         WaitFunctions.sleep(duration);
-        return DataFactoryFunctions.getBoolean(true, "sleep", "Sleep(\"" + duration + "\" milliseconds) " + CoreFormatterConstants.WAS_SUCCESSFUL);
+        return DataFactoryFunctions.getBoolean(true, nameof, "Sleep(\"" + duration + "\" milliseconds)" + CoreFormatterConstants.WAS_SUCCESSFUL);
     }
 
     static DataSupplier<Boolean> sleep(int duration) {
@@ -20,7 +21,7 @@ public interface SleepFunctions {
 
     static Function<?, Void> sleepFunction(int timeout) {
         return any -> {
-            sleep(timeout);
+            SleepFunctions.sleep(timeout).apply();
             return null;
         };
     }

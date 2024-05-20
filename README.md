@@ -1,4 +1,7 @@
 # thorium-core
+[![](https://jitpack.io/v/Neathorium/thorium-core.svg)](https://jitpack.io/#Neathorium/thorium-core)
+[![](https://jitpack.io/v/Neathorium/thorium-core/week.svg)](https://jitpack.io/#Neathorium/thorium-core)
+
 A core set of Java extensions - "record" functionality, command pattern, generic shortcome workarounds, among other things.
 
 One of the most daunting things about Java is the lack of records, tuples, data classes. Whichever you prefer.
