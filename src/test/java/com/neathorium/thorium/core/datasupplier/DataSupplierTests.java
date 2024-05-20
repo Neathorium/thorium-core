@@ -129,16 +129,16 @@ class DataSupplierTests {
     void parallelStepExecutionPassAnyTest() {
         final var step =  StepFactory.voidStep(() -> SleepFunctions.sleep(1000).apply());
         final var step2 =  StepFactory.voidStep(() -> SleepFunctions.sleep(1000).apply());
-        /*final var stepSleep =  StepFactory.voidStep(() -> {
+        final var stepSleep =  StepFactory.voidStep(() -> {
             SleepFunctions.sleep(2000).apply();
             throw new RuntimeException("Throwing stuff2");
         });
         final var failureStep = StepFactory.voidStep(() -> {
             SleepFunctions.sleep(12000).apply();
             throw new RuntimeException("Throwing stuff3");
-        });*/
+        });
 
-        final var result = CommonSteps.executeParallelEndOnAnyTimed(11000, step, step2/*, stepSleep, failureStep*/).apply();
+        final var result = CommonSteps.executeParallelEndOnAnyTimed(11000, step, step2, stepSleep, failureStep).apply();
         Assertions.assertTrue(result.STATUS(), DataFunctions.getFormattedMessage(result));
     }
 

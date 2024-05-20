@@ -18,9 +18,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
 public interface StepExecutorFormatters {
     private static String getTaskExecutionTimeMessage(Instant startTime, Instant stopTime, WaitTimeEntryData entryData) {
@@ -51,7 +53,7 @@ public interface StepExecutorFormatters {
 
     private static Data<Boolean> getExecuteParallelTimedMessageDataCore(
         String nameof,
-        Predicate<Integer> conditionHandler,
+        IntPredicate conditionHandler,
         List<CompletableFuture<? extends Data<?>>> tasks,
         CompletableFuture<?> handlerTask,
         Data<Boolean> result,
@@ -60,7 +62,7 @@ public interface StepExecutorFormatters {
         WaitTimeEntryData entryData
     ) {
         final var localNameof = StringUtils.isNotBlank(nameof) ? nameof : "StepExecutorFormatters.getExecuteParallelTimedMessageDataCore";
-        final var exceptionList = new ArrayList<Throwable>();
+        final var exceptionList = new HashMap<Integer, Throwable>();
         final var separator = "    ";
         final var messageBuilder = new StringBuilder(StepExecutorFormatters.getTaskExecutionTimeMessage(startTime, stopTime, entryData));
         final var done = BooleanUtilities.isFalse(BooleanUtilities.isFalse(handlerTask.isDone()) || DataPredicates.isInvalidOrFalse(result));
@@ -69,7 +71,7 @@ public interface StepExecutorFormatters {
             messageBuilder.append(separator).append(DataFunctions.getFormattedMessage(result));
             exception = result.EXCEPTION();
             if (ExceptionFunctions.isException(exception)) {
-                exceptionList.add(exception);
+                exceptionList.put(0, exception);
             }
         }
 
@@ -83,11 +85,11 @@ public interface StepExecutorFormatters {
                 --passed;
                 exception = current.EXCEPTION();
                 if (ExceptionFunctions.isException(exception)) {
-                    exceptionList.add(exception);
+                    exceptionList.put(index + 1, exception);
                 }
             }
 
-            messageBuilder.append(StepExecutorFormatters.getTaskIndexedMessage(index + 1, DataFunctions.getStatusMessageFromData(current).replace("\\n" + separator, "\n" + separator + separator)));
+            messageBuilder.append(StepExecutorFormatters.getTaskIndexedMessage(index + 1, DataFunctions.getStatusMessageFromData(current).replace("\n" + separator, "\n" + separator + separator)));
         }
 
         final var status = done && conditionHandler.test(passed);
