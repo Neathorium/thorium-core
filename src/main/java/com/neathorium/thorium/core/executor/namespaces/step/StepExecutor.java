@@ -269,7 +269,7 @@ public interface StepExecutor {
         final var data = StepExecutorFormatters.getExecuteAllParallelTimedMessageData(tasks, all, result, startTime, WaitConstants.CLOCK.instant(), entryData);
         final var status = data.STATUS();
         final var message = data.MESSAGE().MESSAGE();
-        return DataFactoryFunctions.getBoolean(status, nameof, message, result.EXCEPTION());
+        return DataFactoryFunctions.getBoolean(status, nameof, message, data.EXCEPTION());
     }
 
     static Data<Boolean> executeEndOnAnyResult(int duration, DataSupplier<?>... steps) {
@@ -290,6 +290,6 @@ public interface StepExecutor {
         final var data = StepExecutorFormatters.getExecuteAnyParallelTimedMessageData(tasks, all, result, startTime, WaitConstants.CLOCK.instant(), entryData);
         final var status = data.STATUS();
         final var message = data.MESSAGE().MESSAGE();
-        return DataFactoryFunctions.getBoolean(status, nameof, message, result.EXCEPTION());
+        return DataFactoryFunctions.getBoolean(status, nameof, message, data.EXCEPTION());
     }
 }
