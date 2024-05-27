@@ -41,7 +41,7 @@ public interface WaitExceptionHandlers {
             formatter = WaitExceptionFormatters::getWaitTimeoutExceptionMessage;
         }
 
-        final var message =  NullablePredicates.isNotNull(formatter) ? formatter.apply(exception.getMessage()) : WaitFormatterConstants.TASK_SUCCESSFULLY_ENDED;
+        final var message = NullablePredicates.isNotNull(formatter) ? formatter.apply(exception.getMessage()) : WaitFormatterConstants.TASK_SUCCESSFULLY_ENDED;
         final var status = task.STATE_DATA().get().DATA().STATUS();
         return DataFactoryFunctions.getWith(formatter, status, nameof, message, exception);
     }

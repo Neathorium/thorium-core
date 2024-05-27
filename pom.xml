@@ -13,8 +13,8 @@
         <java.version>21</java.version>
         <!--Dependency Versions-->
         <thorium-exceptions.version>dbd9653ff73f301422ad06c9f0908b1d13241afb</thorium-exceptions.version>
-        <thorium-java-extensions.version>32df3f96b7489359c7ce47ce1174e8085d702631</thorium-java-extensions.version>
-        <thorium-data.version>8c4629b934f2202b290c05b638f904da7764fad1</thorium-data.version>
+        <thorium-java-extensions.version>ed7a563990a2ca06d4fcfa7d8850b08fc917f66f</thorium-java-extensions.version>
+        <thorium-data.version>c80b77f8086217b6b18ad8af33054b80209b5d1f</thorium-data.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
@@ -110,10 +110,10 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${maven-surefire-plugin.version}</version>
                         <configuration>
-                            <useSystemClassLoader>false</useSystemClassLoader>
+                            <!--<useSystemClassLoader>false</useSystemClassLoader> -->
                             <testFailureIgnore>true</testFailureIgnore>
                             <argLine>
-                                -javaagent:"build/.m2/repository/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                                -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                             </argLine>
                         </configuration>
                     </plugin>

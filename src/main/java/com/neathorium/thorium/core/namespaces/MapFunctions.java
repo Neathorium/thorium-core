@@ -11,7 +11,6 @@ import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredica
 import com.neathorium.thorium.java.extensions.namespaces.predicates.EqualsPredicates;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
-import com.neathorium.thorium.java.extensions.namespaces.utilities.StringUtilities;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;

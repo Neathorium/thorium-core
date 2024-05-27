@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ClipboardTests {
+class ClipboardTests {
     @DisplayName("Copy to clipboard")
     @Test
     void oneFailsSecond() {

@@ -3,6 +3,7 @@ package com.neathorium.thorium.core.executor.namespaces.step;
 import com.neathorium.thorium.core.constants.CoreConstants;
 import com.neathorium.thorium.core.constants.ExecutorConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.records.Data;
 import com.neathorium.thorium.core.data.interfaces.DataSupplier;
@@ -32,6 +33,7 @@ import com.neathorium.thorium.java.extensions.interfaces.functional.boilers.IGet
 import com.neathorium.thorium.java.extensions.namespaces.concurrent.CompletableFutureExtensions;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.ListUtilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +69,7 @@ public interface StepExecutor {
         ExecutionStateData stateData,
         Function<Void, Data<?>>... steps
     ) {
-        final var list = Arrays.asList(steps);
+        final var list = ListUtilities.get(steps);
         return StepExecutor.execute(execution, stateData, list);
     }
 
@@ -257,8 +259,8 @@ public interface StepExecutor {
             throw new ArgumentNullException(nameof + ": Steps should contain at least 2 parallel steps, was null" + CoreFormatterConstants.END_LINE);
         }
         final var stepsLength = steps.length;
-        if ((stepsLength < 2) || (stepsLength > 10) || (duration < 300)) {
-            throw new ArgumentNullException("x");
+        if ((stepsLength < 2) || (duration < 300)) {
+            throw new ArgumentNullException(nameof + ": Steps should contain at least 2 parallel steps" + CoreFormatterConstants.END_LINE);
         }
 
         final var entryData = new WaitTimeEntryData(duration, TimeUnit.MILLISECONDS);
@@ -267,8 +269,8 @@ public interface StepExecutor {
         final var all = CompletableFutureExtensions.allOfTerminateOnFailureTimed(duration, TaskFunctions.getTaskArray(tasks));
         final var result = TaskExceptionHandlers.futureHandler(all);
         final var data = StepExecutorFormatters.getExecuteAllParallelTimedMessageData(tasks, all, result, startTime, WaitConstants.CLOCK.instant(), entryData);
-        final var status = data.STATUS();
-        final var message = data.MESSAGE().MESSAGE();
+        final var status = DataFunctions.getStatus(data);
+        final var message = DataFunctions.getMessage(data);
         return DataFactoryFunctions.getBoolean(status, nameof, message, data.EXCEPTION());
     }
 
@@ -278,8 +280,8 @@ public interface StepExecutor {
             throw new ArgumentNullException(nameof + ": Steps should contain at least 2 parallel steps, was null" + CoreFormatterConstants.END_LINE);
         }
         final var stepsLength = steps.length;
-        if ((stepsLength < 2) || (stepsLength > 10) || (duration < 300)) {
-            throw new ArgumentNullException("x");
+        if ((stepsLength < 2) || (duration < 300)) {
+            throw new ArgumentNullException(nameof + ": Steps should contain at least 2 parallel steps" + CoreFormatterConstants.END_LINE);
         }
 
         final var entryData = new WaitTimeEntryData(duration, TimeUnit.MILLISECONDS);
