@@ -200,15 +200,26 @@ class DataSupplierTests {
         Assertions.assertFalse(result.STATUS(), DataFunctions.getFormattedMessage(result));
     }
 
-
     @DisplayName("Two steps failed, first and third")
     @Test
     void twoStepsFailedFirstandThirdTest() {
-        final var step = StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", false, "test1", "Step wasn't okay" + CoreFormatterConstants.END_LINE), null);
-        final var step2 = StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", true, "test2", OKAY_MESSAGE), null);
-        final var step3 = StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", false, "test3", "Step 3 wasn't okay" + CoreFormatterConstants.END_LINE), null);
+        final var step = StepFactory.allureStepF("FIRST STEP", StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", false, "test1", "Step wasn't okay" + CoreFormatterConstants.END_LINE), null));
+        final var step2 = StepFactory.allureStepF("SECOND STEP", StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", true, "test2", OKAY_MESSAGE), null));
+        final var step3 = StepFactory.allureStepF("THIRD STEP", StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", false, "test3", "Step 3 wasn't okay" + CoreFormatterConstants.END_LINE), null));
 
-        final var result = CommonSteps.executeParallelTimed(1000, step, step2, step3).apply();
+        final var result = StepFactory.allureStepF("Two steps failed, first and third internal", CommonSteps.executeParallelTimed(1000, step, step2, step3)).apply();
+        Assertions.assertFalse(result.STATUS(), DataFunctions.getFormattedMessage(result));
+    }
+
+    @DisplayName("Three steps failed, first, third and fourth")
+    @Test
+    void threeStepsFailedFirstThirdAndFourthTest() {
+        final var step = StepFactory.allureStepF("FIRST STEP", StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", false, "test1", "Step wasn't okay" + CoreFormatterConstants.END_LINE), null));
+        final var step4 = StepFactory.allureStepF("FOURTH STEP", StepFactory.step((Void nothing) -> { throw new IllegalArgumentException("This is an illegal argument exception."); }, null));
+        final var step2 = StepFactory.allureStepF("SECOND STEP", StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", true, "test2", OKAY_MESSAGE), null));
+        final var step3 = StepFactory.allureStepF("THIRD STEP", StepFactory.step((Void nothing) -> DataFactoryFunctions.getWith("Applesauce", false, "test3", "Step 3 wasn't okay" + CoreFormatterConstants.END_LINE), null));
+
+        final var result = StepFactory.allureStepF("Two steps failed, first and third internal", CommonSteps.executeParallelTimed(1000, step, step2, step3, step4)).apply();
         Assertions.assertFalse(result.STATUS(), DataFunctions.getFormattedMessage(result));
     }
 }

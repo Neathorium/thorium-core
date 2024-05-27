@@ -3,6 +3,7 @@ package com.neathorium.thorium.core.executor.namespaces;
 import com.neathorium.thorium.core.constants.CoreConstants;
 import com.neathorium.thorium.core.constants.ExecutorConstants;
 import com.neathorium.thorium.core.constants.validators.CoreFormatterConstants;
+import com.neathorium.thorium.core.data.namespaces.DataFunctions;
 import com.neathorium.thorium.core.namespaces.DataExecutionFunctions;
 import com.neathorium.thorium.core.data.namespaces.factories.DataFactoryFunctions;
 import com.neathorium.thorium.core.data.records.Data;
@@ -14,6 +15,7 @@ import com.neathorium.thorium.core.records.executor.ExecutionStateData;
 import com.neathorium.thorium.core.records.executor.ExecutionStepsData;
 import com.neathorium.thorium.core.records.executor.ExecutorFunctionData;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePredicates;
+import com.neathorium.thorium.java.extensions.namespaces.utilities.ListUtilities;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +43,7 @@ public interface Executor {
         while (exitCondition.test(data, index, indices.size())) {
             stepIndex = indices.get(index);
             data = steps.get(stepIndex).apply(dependency);
-            key = keyFormatter.apply(data.MESSAGE().NAMEOF(), stepIndex);
+            key = keyFormatter.apply(DataFunctions.getNameof(data), stepIndex);
             final var result = MapFunctions.putIfAbsentInvalidOrFalse(map, data, key);
 
             if (filter.test(data)) {
@@ -58,7 +60,7 @@ public interface Executor {
             functionData.END_MESSAGE_HANDLER().apply(executionStatus, key, index, length)
         );
         @SuppressWarnings("unchecked")
-        final var object = (ReturnType)data.OBJECT();
+        final var object = (ReturnType) DataFunctions.getObject(data);
         final var returnObject = ExecutionResultDataFactory.getWith(executionStatus, object);
         return DataFactoryFunctions.getWith(returnObject, status, nameof, message);
     }
@@ -69,7 +71,8 @@ public interface Executor {
         Data<ReturnType> negative,
         List<Function<DependencyType, Data<?>>> steps
     ) {
-        return DataExecutionFunctions.ifDependency("executeGuardCore", CoreFormatter.getValidCommandMessage(steps, execution.RANGE()), executionChain, negative);
+        final var nameof = "Executor.executeGuardCore";
+        return DataExecutionFunctions.ifDependency(nameof, CoreFormatter.getValidCommandMessage(steps, execution.RANGE()), executionChain, negative);
     }
 
     private static <DependencyType, ReturnType> Data<ReturnType> executeData(
@@ -113,7 +116,7 @@ public interface Executor {
         ExecutionStateData stateData,
         Function<DependencyType, Data<?>>... steps
     ) {
-        final List<Function<DependencyType, Data<?>>> stepsList = NullablePredicates.isNotNull(steps) ? Arrays.asList(steps) : List.of();
+        final var stepsList = ListUtilities.get(steps);
         return Executor.execute(execution, stateData, stepsList);
     }
 
@@ -132,7 +135,7 @@ public interface Executor {
         ExecutionStateData stateData,
         Function<DependencyType, Data<?>>... steps
     ) {
-        final List<Function<DependencyType, Data<?>>> stepsList = NullablePredicates.isNotNull(steps) ? Arrays.asList(steps) : List.of();
+        final var stepsList = ListUtilities.get(steps);
         return Executor.execute(functionData, stateData, stepsList);
     }
 
@@ -148,7 +151,7 @@ public interface Executor {
         ExecutorFunctionData functionData,
         Function<DependencyType, Data<?>>... steps
     ) {
-        final List<Function<DependencyType, Data<?>>> stepsList = NullablePredicates.isNotNull(steps) ? Arrays.asList(steps) : List.of();
+        final var stepsList = ListUtilities.get(steps);
         return Executor.execute(functionData, stepsList);
     }
 
@@ -167,7 +170,7 @@ public interface Executor {
         ExecutionParametersData<Function<DependencyType, Data<?>>, Function<DependencyType, Data<ExecutionResultData<ReturnType>>>> execution,
         Function<DependencyType, Data<?>>... steps
     ) {
-        final var stepsList = Arrays.asList(steps);
+        final var stepsList = ListUtilities.get(steps);
         return Executor.execute(execution, stepsList);
     }
 }

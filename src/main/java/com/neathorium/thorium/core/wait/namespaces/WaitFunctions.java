@@ -30,7 +30,6 @@ import com.neathorium.thorium.core.wait.records.WaitTimeEntryData;
 import com.neathorium.thorium.core.wait.records.tasks.WaitTask;
 import com.neathorium.thorium.core.wait.records.tasks.WaitRepeatTask;
 import com.neathorium.thorium.core.wait.records.tasks.common.WaitTaskCommonData;
-import com.neathorium.thorium.core.wait.records.tasks.common.WaitTaskStateData;
 import com.neathorium.thorium.exceptions.exception.ArgumentNullException;
 import com.neathorium.thorium.java.extensions.interfaces.functional.TriFunction;
 import com.neathorium.thorium.java.extensions.namespaces.predicates.BasicPredicates;
@@ -39,10 +38,8 @@ import com.neathorium.thorium.java.extensions.namespaces.predicates.NullablePred
 import com.neathorium.thorium.java.extensions.namespaces.utilities.BooleanUtilities;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -227,7 +224,15 @@ public interface WaitFunctions {
         return WaitFunctions.commonCore(
             () -> {
                 try {
-                    task.SCHEDULER().scheduleWithFixedDelay(runnable, 0, data.ENTRY_PAIR_DATA().INTERVAL().LENGTH(), data.ENTRY_PAIR_DATA().INTERVAL().TIME_UNIT()).get(data.ENTRY_PAIR_DATA().DURATION().LENGTH(), data.ENTRY_PAIR_DATA().DURATION().TIME_UNIT());
+                    task.SCHEDULER().scheduleWithFixedDelay(
+                        runnable,
+                        0,
+                        data.ENTRY_PAIR_DATA().INTERVAL().LENGTH(),
+                        data.ENTRY_PAIR_DATA().INTERVAL().TIME_UNIT()
+                    ).get(
+                        data.ENTRY_PAIR_DATA().DURATION().LENGTH(),
+                        data.ENTRY_PAIR_DATA().DURATION().TIME_UNIT()
+                    );
                 } catch (InterruptedException ex) {
                     throw new WrappedThreadInterruptedException("Thread was interrupted, exception is wrapped for code" + CoreFormatterConstants.END_LINE, ex);
                 } catch (ExecutionException ex) {
